@@ -4,10 +4,13 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
+import { motion } from "framer-motion"
 import {
   ArrowLeft,
   Clock,
@@ -86,6 +89,72 @@ export default function MoodHistoryPage() {
           <p className="mt-1 text-muted-foreground">Track and understand your emotional patterns over time</p>
         </div>
       </div>
+
+      {/* Intelligence Insights Section */}
+      <div className="mb-8 grid gap-4 md:grid-cols-3">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-muted-foreground">Most Common Mood</p>
+                <div className="flex items-center gap-3">
+                  <Smile className="h-6 w-6 text-yellow-500" />
+                  <div>
+                    <p className="text-2xl font-bold text-foreground">Happy</p>
+                    <p className="text-xs text-muted-foreground">52% of sessions</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-muted-foreground">Weekly Improvement</p>
+                <div className="flex items-center gap-3">
+                  <TrendingUp className="h-6 w-6 text-green-500" />
+                  <div>
+                    <p className="text-2xl font-bold text-foreground">+15%</p>
+                    <p className="text-xs text-muted-foreground">Compared to last week</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <Card>
+            <CardContent className="pt-6">
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-muted-foreground">Wellness Score</p>
+                <div className="space-y-2">
+                  <p className="text-2xl font-bold text-foreground">78/100</p>
+                  <Progress value={78} className="h-2" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      {/* Time-Based Pattern Insight */}
+      <Card className="mb-8 border-accent/20 bg-accent/5">
+        <CardContent className="pt-6">
+          <div className="flex gap-3">
+            <Clock className="h-5 w-5 shrink-0 text-accent" />
+            <div>
+              <p className="font-medium text-foreground">Time-Based Pattern</p>
+              <p className="text-sm text-muted-foreground">
+                You tend to feel more stressed during evening hours (5 PM - 8 PM). Try scheduling relaxation activities during this time, like breathing exercises or outdoor walks.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList>

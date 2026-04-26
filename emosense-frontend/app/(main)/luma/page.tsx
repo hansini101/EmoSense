@@ -36,11 +36,38 @@ const lumaResponses: Record<string, string> = {
   relax: "Let's create a moment of calm together. Here's a progressive muscle relaxation technique:\n\n**Body Scan Relaxation:**\n- Start by tensing your toes for 5 seconds, then release\n- Move to your calves, thighs, stomach, hands, arms, shoulders, and face\n- With each release, feel the tension melting away\n\nYou deserve this moment of peace. Remember, relaxation is not laziness — it's self-care. Would you like me to guide you through a longer meditation?",
   motivation: "I believe in you, and here's why you should too:\n\n**Remember:**\n- You've overcome challenges before, and you will again\n- Progress isn't always linear — small steps matter\n- You're here seeking help, which shows incredible strength\n\n**Try this:** Write down 3 things you've accomplished this week, no matter how small. Acknowledging your wins builds momentum.\n\nWhat's one small goal you'd like to achieve today? Let's make it happen together.",
   breathing: "Let's do a calming breathing exercise together:\n\n**4-7-8 Breathing Technique:**\n1. Breathe IN through your nose for **4 seconds**\n2. HOLD your breath for **7 seconds**\n3. Breathe OUT through your mouth for **8 seconds**\n4. Repeat this cycle **4 times**\n\nThis technique activates your parasympathetic nervous system, helping your body shift from \"fight or flight\" to \"rest and digest.\" It's especially helpful before bed or during anxious moments.\n\nHow do you feel after trying it?",
+  repeated_sad: "Hey… I noticed you've been feeling low lately. I see this is affecting you more than usual. Do you want to talk about it, or would you prefer to just sit quietly for a moment? Sometimes we don't need solutions—we just need to be heard.",
+  repeated_stress: "I've been watching your patterns, and I notice stress keeps coming back. This tells me something needs to change, even if it's small. What's one thing that's consistently causing this stress? Let's tackle it together.",
   default: "Thank you for sharing that with me. I want you to know that your feelings are valid, and it's brave of you to express them.\n\nHere are some things that might help:\n- **Talk it out:** Sometimes verbalizing our feelings helps us understand them better\n- **Take a break:** Step away from what's overwhelming you, even for 5 minutes\n- **Connect with someone:** Reach out to a friend, family member, or counselor\n\nWould you like me to suggest a specific wellness activity, or would you prefer to keep talking about how you're feeling?",
 }
 
-function getLumaResponse(message: string): string {
+function getLumaResponse(message: string, messageHistory?: Message[]): string {
   const lower = message.toLowerCase()
+  
+  // Check message history for patterns (context-aware)
+  let sadCount = 0
+  let stressCount = 0
+  if (messageHistory) {
+    messageHistory.slice(-5).forEach((msg) => {
+      if (msg.role === "user") {
+        const msgLower = msg.content.toLowerCase()
+        if (msgLower.includes("sad") || msgLower.includes("sad") || msgLower.includes("depressed")) sadCount++
+        if (msgLower.includes("stress") || msgLower.includes("anxious")) stressCount++
+      }
+    })
+  }
+  
+  // If repeated sad pattern detected
+  if ((lower.includes("sad") || lower.includes("depressed")) && sadCount >= 2) {
+    return lumaResponses.repeated_sad
+  }
+  
+  // If repeated stress pattern detected
+  if ((lower.includes("stress") || lower.includes("anxious")) && stressCount >= 2) {
+    return lumaResponses.repeated_stress
+  }
+
+  // Regular keyword-based responses
   if (lower.includes("stress") || lower.includes("anxious") || lower.includes("worried") || lower.includes("overwhelm")) return lumaResponses.stress
   if (lower.includes("relax") || lower.includes("calm") || lower.includes("peace") || lower.includes("sleep")) return lumaResponses.relax
   if (lower.includes("motivat") || lower.includes("inspire") || lower.includes("give up") || lower.includes("hopeless")) return lumaResponses.motivation
@@ -97,7 +124,7 @@ export default function LumaPage() {
     setTyping(true)
 
     setTimeout(() => {
-      const response = getLumaResponse(text)
+      const response = getLumaResponse(text, messages)
       const lumaMsg: Message = {
         id: Date.now() + 1,
         role: "luma",
@@ -133,7 +160,7 @@ export default function LumaPage() {
   }
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-4rem)] max-w-3xl flex-col px-4 py-4 lg:px-8">
+    <div className="mx-auto flex h-screen max-w-3xl flex-col px-4 py-4 lg:px-8">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -165,8 +192,9 @@ export default function LumaPage() {
       </div>
 
       {/* Chat Area */}
-      <Card className="flex flex-1 flex-col overflow-hidden">
-        <ScrollArea className="flex-1 p-4">
+      <Card className="flex flex-1 flex-col overflow-hidden bg-background">
+        <ScrollArea className="flex-1 overflow-hidden">
+          <div className="p-4">
           <div className="flex flex-col gap-4">
             {messages.map((msg) => (
               <div
@@ -201,6 +229,7 @@ export default function LumaPage() {
               </div>
             )}
             <div ref={scrollEndRef} />
+          </div>
           </div>
         </ScrollArea>
 

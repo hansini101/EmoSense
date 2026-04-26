@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { motion } from "framer-motion"
+import { AlertCircle, CheckCircle, Lightbulb, Wind, Shield } from "lucide-react"
+import { ActivityWellnessTracker } from "@/components/activity-wellness-tracker"
 import {
   Camera,
   Heart,
@@ -71,6 +73,7 @@ const quickActions = [
   { label: "Talk to Luma", href: "/luma", icon: MessageCircle, color: "bg-secondary text-secondary-foreground" },
   { label: "Wellness Hub", href: "/wellness", icon: Heart, color: "bg-accent text-accent-foreground" },
   { label: "View History", href: "/mood-history", icon: Clock, color: "bg-primary/10 text-foreground" },
+  { label: "Privacy & Ethics", href: "/privacy-ethics", icon: Shield, color: "bg-blue-500/10 text-blue-600" },
 ]
 
 export default function DashboardPage() {
@@ -205,6 +208,86 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* AI Decision Engine: Smart Suggestions */}
+      <div className="mb-8">
+        <h2 className="mb-4 text-xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
+          Personalized Wellness Suggestions
+        </h2>
+        <div className="space-y-3">
+          <motion.div
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="border-yellow-200/50 bg-yellow-50/50 dark:border-yellow-900/30 dark:bg-yellow-950/20">
+              <CardContent className="flex items-start gap-3 p-4">
+                <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-yellow-600 dark:text-yellow-400" />
+                <div className="flex-1">
+                  <p className="font-medium text-foreground">Consider stronger support</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    You've been feeling stressed frequently. Booking a counselor can help develop strategies.
+                  </p>
+                  <Link href="/booking" className="mt-2 inline-block">
+                    <Button size="sm" variant="outline" className="gap-1">
+                      <Heart className="h-3 w-3" /> Book Counselor
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="border-green-200/50 bg-green-50/50 dark:border-green-900/30 dark:bg-green-950/20">
+              <CardContent className="flex items-start gap-3 p-4">
+                <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
+                <div className="flex-1">
+                  <p className="font-medium text-foreground">You're improving!</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Your mood improved 15% this week. Keep journaling—it's helping.
+                  </p>
+                  <Link href="/wellness/gratitude-journal" className="mt-2 inline-block">
+                    <Button size="sm" variant="outline" className="gap-1">
+                      <Lightbulb className="h-3 w-3" /> Continue Journaling
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: -16 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Card className="border-purple-200/50 bg-purple-50/50 dark:border-purple-900/30 dark:bg-purple-950/20">
+              <CardContent className="flex items-start gap-3 p-4">
+                <Wind className="mt-0.5 h-5 w-5 shrink-0 text-purple-600 dark:text-purple-400" />
+                <div className="flex-1">
+                  <p className="font-medium text-foreground">Evening wind-down tip</p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    You feel more negative in evenings. Try breathing exercises before bed.
+                  </p>
+                  <Link href="/wellness" className="mt-2 inline-block">
+                    <Button size="sm" variant="outline" className="gap-1">
+                      <Wind className="h-3 w-3" /> Breathing Exercise
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Activity Wellness Tracker */}
+      <ActivityWellnessTracker />
 
       {/* Bottom Row */}
       <div className="grid gap-6 lg:grid-cols-2">
