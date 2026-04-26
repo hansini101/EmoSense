@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 import numpy as np
 
-from .utils import preprocess_image
+from .utils import preprocess_image, is_valid_image_content
 from .model_loader import load_model
 from .models import EmotionPrediction, UserProfile, EmotionPattern
 from .personalization import (
@@ -173,19 +173,31 @@ def predict(request):
     Returns personalized response if user is authenticated
     """
     try:
+        print("FILES:", request.FILES)
         image = request.FILES.get('image')
+        print("IMAGE:", image)
+        print("NAME:", image.name if image else None)
+        print("CONTENT TYPE:", image.content_type if image else None)
+        
         if not image:
             return Response(
                 {"error": "No image provided"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        if not image.content_type.startswith('image/'):
+        # Debug: log received image info
+        print(f"DEBUG: Received image - name: {image.name}, content_type: {image.content_type}, size: {image.size}")
+        
+        # 🧪 TEMPORARY TEST: Comment this out to bypass validation
+        if not is_valid_image_content(image):
+            print(f"DEBUG: Image validation failed for {image.name}")
             return Response(
                 {"error": "Invalid file type. Please upload an image."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        # END TEMPORARY TEST
         
+        print(f"DEBUG: Image validation passed for {image.name}")
         # Get optional user context
         user = request.user if request.user.is_authenticated else None
         user_notes = request.data.get('notes', '')

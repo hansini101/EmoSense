@@ -17,7 +17,8 @@ def load_model():
         return _model
     
     try:
-        import tensorflow as tf
+        # Use the correct import path for TensorFlow 2.13.0
+        from tensorflow.keras import models
         
         model_path = settings.ML_MODEL_PATH
         
@@ -27,7 +28,7 @@ def load_model():
                 "Please download the model using: python download_model.py"
             )
         
-        _model = tf.keras.models.load_model(model_path)
+        _model = models.load_model(model_path)
         print(f"✓ Model loaded successfully from {model_path}")
         return _model
         

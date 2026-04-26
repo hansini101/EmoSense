@@ -6,6 +6,55 @@ import numpy as np
 from io import BytesIO
 from PIL import Image
 
+# ========================
+# IMAGE VALIDATION CONSTANTS
+# ========================
+MAX_IMAGE_SIZE_MB = 5
+MAX_IMAGE_SIZE_BYTES = MAX_IMAGE_SIZE_MB * 1024 * 1024
+ALLOWED_FORMATS = {'JPEG', 'PNG', 'WEBP', 'GIF'}
+
+
+# ========================
+# IMAGE VALIDATION FUNCTION
+# ========================
+def is_valid_image_content(file):
+    """
+    Validate image file by checking actual content, not filename.
+    
+    This is the most reliable version that:
+    1. Seeks to beginning BEFORE opening (critical)
+    2. Opens image with PIL
+    3. Converts to RGB to force full decoding
+    4. Seeks to beginning AGAIN for downstream use
+    
+    ⚠️ CRITICAL: Double seek() ensures file pointer is correct and
+    prevents file consumption by Django or other middleware.
+    
+    Args:
+        file: Django UploadedFile object
+    
+    Returns:
+        bool: True if file is a valid image, False otherwise
+    """
+    try:
+        # 🔥 CRITICAL: Seek to beginning BEFORE opening
+        file.seek(0)
+        
+        # Open file as image
+        img = Image.open(file)
+        
+        # Force full decoding by converting to RGB
+        img = img.convert("RGB")
+        
+        # 🔥 CRITICAL: Reset pointer again for downstream processing
+        file.seek(0)
+        
+        return True
+        
+    except Exception as e:
+        print(f"IMAGE ERROR: {e}")
+        return False
+
 
 def preprocess_image(image_file):
     """
