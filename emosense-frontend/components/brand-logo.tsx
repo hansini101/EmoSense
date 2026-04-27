@@ -32,7 +32,7 @@ export function BrandLogo({
 
   return (
     <Image
-      src={`/placeholder-logo.png?t=${Date.now()}`}
+      src="/placeholder-logo.png"
       alt={alt}
       width={size}
       height={size}

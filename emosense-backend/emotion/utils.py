@@ -58,7 +58,7 @@ def is_valid_image_content(file):
 
 def preprocess_image(image_file):
     """
-    Preprocess image for emotion detection model
+    Preprocess image for emotion detection model with face detection
     
     Args:
         image_file: Django UploadedFile object
@@ -81,18 +81,25 @@ def preprocess_image(image_file):
         # Convert to grayscale
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        # Detect face before prediction, then crop to face ROI.
-        face_cascade = cv2.CascadeClassifier(
-            cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+        # Load local Haar Cascade classifier for face detection
+        import os
+        cascade_path = os.path.join(
+            os.path.dirname(__file__),
+            'haarcascade_frontalface_default.xml'
         )
+        face_cascade = cv2.CascadeClassifier(cascade_path)
+        
+        # Detect faces with parameters optimized for emotion recognition
         faces = face_cascade.detectMultiScale(img_gray, 1.3, 5)
 
         if len(faces) == 0:
-            raise ValueError("No face detected in image")
-
-        # Use the largest detected face when multiple faces are present.
-        x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
-        face_roi = img_gray[y:y + h, x:x + w]
+            # Fallback: Use full image if no face detected
+            print("WARNING: No face detected, using full image")
+            face_roi = img_gray
+        else:
+            # Use the largest detected face when multiple faces are present
+            x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
+            face_roi = img_gray[y:y + h, x:x + w]
         
         # Resize to model input size (48x48)
         img_resized = cv2.resize(face_roi, (48, 48))
@@ -128,10 +135,13 @@ def extract_faces(image_file):
         if img is None:
             raise ValueError("Failed to decode image")
         
-        # Load Haar Cascade classifier
-        face_cascade = cv2.CascadeClassifier(
-            cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+        # Load local Haar Cascade classifier
+        import os
+        cascade_path = os.path.join(
+            os.path.dirname(__file__),
+            'haarcascade_frontalface_default.xml'
         )
+        face_cascade = cv2.CascadeClassifier(cascade_path)
         
         # Convert to grayscale
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
