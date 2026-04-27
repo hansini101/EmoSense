@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
+import { BrandLogo } from "@/components/brand-logo"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -9,7 +10,6 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   ArrowLeft,
   Send,
-  Brain,
   Heart,
   Wind,
   Sparkles,
@@ -170,9 +170,7 @@ export default function LumaPage() {
             </Button>
           </Link>
           <div className="flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary">
-              <Brain className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <BrandLogo className="h-10 w-10" imageClassName="rounded-full" />
             <div>
               <h1 className="text-lg font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>Luma</h1>
               <p className="text-xs text-muted-foreground">AI Wellness Companion</p>

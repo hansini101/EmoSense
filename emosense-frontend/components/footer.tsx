@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { Brain, Heart } from "lucide-react"
+import { BrandLogo } from "@/components/brand-logo"
+import { Heart } from "lucide-react"
 
 const footerLinks = {
   Features: [
@@ -28,9 +29,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-4">
             <Link href="/" className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-                <Brain className="h-5 w-5 text-primary-foreground" />
-              </div>
+              <BrandLogo className="h-9 w-9" imageClassName="object-contain" />
               <span className="text-xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
                 EmoSense
               </span>

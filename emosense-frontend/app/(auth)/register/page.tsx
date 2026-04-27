@@ -7,7 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Brain, Eye, EyeOff } from "lucide-react"
+import { BrandLogo } from "@/components/brand-logo"
+import { Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
 
 export default function RegisterPage() {
@@ -29,9 +30,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-md">
         <div className="mb-8 flex flex-col items-center">
           <Link href="/" className="mb-4 flex items-center gap-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <Brain className="h-6 w-6 text-primary-foreground" />
-            </div>
+            <BrandLogo className="h-10 w-10" imageClassName="object-contain" priority />
             <span className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>EmoSense</span>
           </Link>
         </div>

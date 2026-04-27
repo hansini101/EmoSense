@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, type ComponentType } from "react"
 import Link from "next/link"
+import Webcam from "react-webcam"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -161,46 +162,72 @@ const emotionResults: Record<string, EmotionResult> = {
 }
 
 export default function EmotionDetectionPage() {
+  const WebcamComponent = Webcam as unknown as ComponentType<any>
   const [mode, setMode] = useState<"webcam" | "upload">("webcam")
   const [cameraActive, setCameraActive] = useState(false)
+  const [cameraError, setCameraError] = useState<string | null>(null)
   const [analyzing, setAnalyzing] = useState(false)
   const [result, setResult] = useState<EmotionResult | null>(null)
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
   const [feedbackGiven, setFeedbackGiven] = useState(false)
   const [accuracyRate, setAccuracyRate] = useState(92)
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const webcamRef = useRef<any>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const startCamera = useCallback(async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        setCameraActive(true)
-      }
-    } catch {
-      toast.error("Unable to access camera. Please check permissions.")
+    setCameraError(null)
+
+    if (!window.isSecureContext) {
+      const message = "Camera requires a secure context. Use localhost or HTTPS."
+      console.error("Camera error:", message)
+      setCameraError(message)
+      toast.error(message)
+      return
     }
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      const message = "Camera is not supported in this browser."
+      console.error("Camera error:", message)
+      setCameraError(message)
+      toast.error(message)
+      return
+    }
+
+    setCameraActive(true)
   }, [])
 
   const stopCamera = useCallback(() => {
-    if (videoRef.current?.srcObject) {
-      const tracks = (videoRef.current.srcObject as MediaStream).getTracks()
-      tracks.forEach((track) => track.stop())
-      videoRef.current.srcObject = null
-      setCameraActive(false)
+    setCameraActive(false)
+  }, [])
+
+  const handleUserMedia = useCallback(() => {
+    setCameraError(null)
+  }, [])
+
+  const handleUserMediaError = useCallback((err: string | DOMException) => {
+    console.error("Camera error:", err)
+    const errorName = typeof err === "string" ? err : err?.name
+    let message = "Unable to access camera. Please check permissions and try again."
+    if (errorName === "NotAllowedError") {
+      message = "Camera permission denied. Allow camera access for localhost and refresh."
+    } else if (errorName === "NotReadableError") {
+      message = "Camera is busy. Close Zoom/Teams/Camera app and try again."
+    } else if (errorName === "NotFoundError") {
+      message = "No camera detected on this device."
     }
+    setCameraError(message)
+    setCameraActive(false)
+    toast.error(message)
   }, [])
 
   const captureAndAnalyze = useCallback(() => {
-    if (videoRef.current && canvasRef.current) {
-      const ctx = canvasRef.current.getContext("2d")
-      canvasRef.current.width = videoRef.current.videoWidth
-      canvasRef.current.height = videoRef.current.videoHeight
-      ctx?.drawImage(videoRef.current, 0, 0)
-      stopCamera()
+    if (webcamRef.current) {
+      const frame = webcamRef.current.getScreenshot()
+      if (frame) {
+        setUploadedImage(frame)
+      }
     }
+    stopCamera()
     analyzeEmotion()
   }, [stopCamera])
 
@@ -230,6 +257,7 @@ export default function EmotionDetectionPage() {
   const resetAll = () => {
     setResult(null)
     setUploadedImage(null)
+    setCameraError(null)
     setCameraActive(false)
     setFeedbackGiven(false)
     stopCamera()
@@ -251,6 +279,12 @@ export default function EmotionDetectionPage() {
         </div>
       </div>
 
+      <div className="mb-6 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3">
+        <p className="text-sm text-amber-900 dark:text-amber-200">
+          Note: Emotion detection may vary based on lighting, image quality, and facial expression intensity.
+        </p>
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Input Section */}
         <div className="lg:col-span-3">
@@ -268,15 +302,24 @@ export default function EmotionDetectionPage() {
 
                 <TabsContent value="webcam" className="mt-4">
                   <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-border bg-muted">
-                    {cameraActive ? (
-                      <video
-                        ref={videoRef}
-                        autoPlay
-                        playsInline
-                        muted
+                    {cameraActive && (
+                      <WebcamComponent
+                        ref={webcamRef}
+                        audio={false}
+                        mirrored
+                        screenshotFormat="image/jpeg"
+                        screenshotQuality={0.92}
+                        videoConstraints={{
+                          facingMode: "user",
+                          width: { ideal: 1280 },
+                          height: { ideal: 720 },
+                        }}
+                        onUserMedia={handleUserMedia}
+                        onUserMediaError={handleUserMediaError}
                         className="h-full w-full object-cover"
                       />
-                    ) : (
+                    )}
+                    {!cameraActive && (
                       <div className="flex h-full flex-col items-center justify-center gap-4 p-8">
                         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
                           <Camera className="h-8 w-8 text-primary" />
@@ -286,8 +329,13 @@ export default function EmotionDetectionPage() {
                         </p>
                       </div>
                     )}
-                    <canvas ref={canvasRef} className="hidden" />
                   </div>
+                  {cameraError && (
+                    <div className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 p-3">
+                      <p className="text-sm font-medium text-destructive">Camera issue detected</p>
+                      <p className="mt-1 text-xs text-muted-foreground">{cameraError}</p>
+                    </div>
+                  )}
                   <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                     {!cameraActive ? (
                       <Button onClick={startCamera} className="flex-1 gap-2">

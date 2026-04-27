@@ -11,6 +11,11 @@ export const metadata: Metadata = {
   title: 'EmoSense - AI-Powered Emotion Wellness',
   description: 'EmoSense helps university students understand their emotions through AI-powered detection and personalized wellness recommendations. Talk to Luma, your AI therapist.',
   keywords: ['emotion detection', 'mental health', 'AI therapist', 'student wellness', 'mood tracking'],
+  icons: {
+    icon: '/emosense-logo.png',
+    shortcut: '/emosense-logo.png',
+    apple: '/emosense-logo.png',
+  },
 }
 
 export const viewport: Viewport = {

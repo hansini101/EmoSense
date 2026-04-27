@@ -67,6 +67,9 @@ def preprocess_image(image_file):
         numpy array of shape (1, 48, 48, 1) ready for model input
     """
     try:
+        # Ensure we read from the beginning of uploaded file.
+        image_file.seek(0)
+
         # Read image from file
         image_data = image_file.read()
         nparr = np.frombuffer(image_data, np.uint8)
@@ -77,9 +80,22 @@ def preprocess_image(image_file):
         
         # Convert to grayscale
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # Detect face before prediction, then crop to face ROI.
+        face_cascade = cv2.CascadeClassifier(
+            cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+        )
+        faces = face_cascade.detectMultiScale(img_gray, 1.3, 5)
+
+        if len(faces) == 0:
+            raise ValueError("No face detected in image")
+
+        # Use the largest detected face when multiple faces are present.
+        x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
+        face_roi = img_gray[y:y + h, x:x + w]
         
         # Resize to model input size (48x48)
-        img_resized = cv2.resize(img_gray, (48, 48))
+        img_resized = cv2.resize(face_roi, (48, 48))
         
         # Normalize to [0, 1]
         img_normalized = img_resized.astype('float32') / 255.0
