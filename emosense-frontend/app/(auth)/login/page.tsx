@@ -2,26 +2,38 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { BrandLogo } from "@/components/brand-logo"
+import { useLanguage } from "@/lib/language-context"
 import { Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
+import { useAuth } from "@/lib/auth-context"
 
 export default function LoginPage() {
+  const { t } = useLanguage()
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const router = useRouter()
+  const { login } = useAuth()
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+    try {
+      await login(username, password)
       toast.success("Welcome back! Redirecting to dashboard...")
-      window.location.href = "/dashboard"
-    }, 1500)
+      router.push("/dashboard")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Login failed")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -35,18 +47,25 @@ export default function LoginPage() {
         </div>
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome Back</CardTitle>
-            <CardDescription>Sign in to continue your wellness journey</CardDescription>
+            <CardTitle className="text-2xl">{t('auth.signin')}</CardTitle>
+            <CardDescription>{t('auth.login')}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="you@university.edu" required />
+                <Label htmlFor="username">{t('auth.username')}</Label>
+                <Input 
+                  id="username" 
+                  type="text" 
+                  placeholder={t('auth.username')} 
+                  required 
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
               </div>
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
+                  <Label htmlFor="password">{t('auth.password')}</Label>
                   <Link href="/forgot-password" className="text-xs text-primary hover:underline">
                     Forgot password?
                   </Link>
@@ -55,8 +74,10 @@ export default function LoginPage() {
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
+                    placeholder={t('auth.password')}
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
                     type="button"
@@ -68,12 +89,12 @@ export default function LoginPage() {
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Signing in..." : "Sign In"}
+                {loading ? "Signing in..." : t('auth.signin')}
               </Button>
             </form>
             <p className="mt-4 text-center text-sm text-muted-foreground">
-              {"Don't have an account? "}
-              <Link href="/register" className="font-medium text-primary hover:underline">Sign up</Link>
+              {t('auth.no_account')} {" "}
+              <Link href="/register" className="font-medium text-primary hover:underline">{t('auth.signup')}</Link>
             </p>
           </CardContent>
         </Card>

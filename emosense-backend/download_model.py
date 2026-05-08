@@ -19,6 +19,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 MODEL_DIR = BASE_DIR / 'emotion' / 'ml_model'
 MODEL_PATH = MODEL_DIR / 'emotion_model.h5'
+IMG_SIZE = 96
 
 
 def create_simple_model():
@@ -29,33 +30,30 @@ def create_simple_model():
     try:
         import tensorflow as tf
         from tensorflow.keras import layers, models
+        from tensorflow.keras.applications import MobileNetV2
         
         print("📦 Creating simple emotion detection model...")
         
+        base_model = MobileNetV2(
+            include_top=False,
+            weights='imagenet',
+            input_shape=(IMG_SIZE, IMG_SIZE, 3)
+        )
+        base_model.trainable = True
+
         model = models.Sequential([
-            layers.Conv2D(64, (3, 3), activation='relu', input_shape=(48, 48, 1)),
+            layers.Input(shape=(IMG_SIZE, IMG_SIZE, 1)),
+            layers.Lambda(lambda x: tf.image.grayscale_to_rgb(x)),
+            base_model,
+            layers.GlobalAveragePooling2D(),
             layers.BatchNormalization(),
-            layers.MaxPooling2D((2, 2)),
-            layers.Dropout(0.25),
-            
-            layers.Conv2D(128, (3, 3), activation='relu'),
-            layers.BatchNormalization(),
-            layers.MaxPooling2D((2, 2)),
-            layers.Dropout(0.25),
-            
-            layers.Conv2D(256, (3, 3), activation='relu'),
-            layers.BatchNormalization(),
-            layers.MaxPooling2D((2, 2)),
-            layers.Dropout(0.25),
-            
-            layers.Flatten(),
-            layers.Dense(256, activation='relu'),
+            layers.Dense(128, activation='relu'),
             layers.Dropout(0.5),
-            layers.Dense(7, activation='softmax')  # 7 emotions
+            layers.Dense(7, activation='softmax')
         ])
         
         model.compile(
-            optimizer='adam',
+            optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
             loss='categorical_crossentropy',
             metrics=['accuracy']
         )

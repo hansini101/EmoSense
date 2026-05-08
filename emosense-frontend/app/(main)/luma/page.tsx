@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { useLanguage } from "@/lib/language-context"
 import {
   ArrowLeft,
   Send,
@@ -24,13 +25,6 @@ type Message = {
   timestamp: string
 }
 
-const quickPrompts = [
-  { label: "I feel stressed", icon: Wind },
-  { label: "Help me relax", icon: Heart },
-  { label: "I need motivation", icon: Sparkles },
-  { label: "Breathing exercise", icon: Wind },
-]
-
 const lumaResponses: Record<string, string> = {
   stress: "I hear you, and it's completely okay to feel stressed. University life can be overwhelming sometimes. Let's try something together:\n\n**Quick Grounding Exercise:**\n1. Take a slow deep breath in for 4 seconds\n2. Hold for 4 seconds\n3. Exhale slowly for 6 seconds\n4. Repeat 3 times\n\nStress is your body's way of responding to demands. Would you like to talk about what's specifically causing your stress? Sometimes just naming it can help reduce its power over you.",
   relax: "Let's create a moment of calm together. Here's a progressive muscle relaxation technique:\n\n**Body Scan Relaxation:**\n- Start by tensing your toes for 5 seconds, then release\n- Move to your calves, thighs, stomach, hands, arms, shoulders, and face\n- With each release, feel the tension melting away\n\nYou deserve this moment of peace. Remember, relaxation is not laziness — it's self-care. Would you like me to guide you through a longer meditation?",
@@ -38,11 +32,53 @@ const lumaResponses: Record<string, string> = {
   breathing: "Let's do a calming breathing exercise together:\n\n**4-7-8 Breathing Technique:**\n1. Breathe IN through your nose for **4 seconds**\n2. HOLD your breath for **7 seconds**\n3. Breathe OUT through your mouth for **8 seconds**\n4. Repeat this cycle **4 times**\n\nThis technique activates your parasympathetic nervous system, helping your body shift from \"fight or flight\" to \"rest and digest.\" It's especially helpful before bed or during anxious moments.\n\nHow do you feel after trying it?",
   repeated_sad: "Hey… I noticed you've been feeling low lately. I see this is affecting you more than usual. Do you want to talk about it, or would you prefer to just sit quietly for a moment? Sometimes we don't need solutions—we just need to be heard.",
   repeated_stress: "I've been watching your patterns, and I notice stress keeps coming back. This tells me something needs to change, even if it's small. What's one thing that's consistently causing this stress? Let's tackle it together.",
+  off_topic: "I appreciate you reaching out, but I can only help with wellness and emotional health topics. I'm specifically designed to support your mental wellbeing, help you manage stress, anxiety, and other emotions.\n\n**I can help with:**\n- Stress, anxiety, or worry management\n- Sadness or depression support\n- Coping strategies and breathing exercises\n- Motivation and confidence building\n- Sleep issues and relaxation\n- Emotional support and listening\n\nFor other topics, I'd recommend searching online or asking a general assistant.\n\nHow are you feeling emotionally today? I'm here to listen and support you. 💙",
   default: "Thank you for sharing that with me. I want you to know that your feelings are valid, and it's brave of you to express them.\n\nHere are some things that might help:\n- **Talk it out:** Sometimes verbalizing our feelings helps us understand them better\n- **Take a break:** Step away from what's overwhelming you, even for 5 minutes\n- **Connect with someone:** Reach out to a friend, family member, or counselor\n\nWould you like me to suggest a specific wellness activity, or would you prefer to keep talking about how you're feeling?",
 }
 
 function getLumaResponse(message: string, messageHistory?: Message[]): string {
-  const lower = message.toLowerCase()
+  const lower = message.toLowerCase().trim()
+  
+  // STRICT: Only these wellness-related keywords are allowed for Luma to respond
+  const strictWellnessKeywords = [
+    // Emotions
+    'stress', 'anxious', 'anxiety', 'worried', 'fear', 'afraid', 'panic',
+    'sad', 'sadness', 'depressed', 'depression', 'unhappy', 'upset', 'down',
+    'angry', 'anger', 'frustrated', 'frustration', 'mad', 'irritated',
+    'happy', 'happiness', 'joy', 'joyful', 'excited', 'excited',
+    'lonely', 'loneliness', 'alone', 'isolated',
+    'nervous', 'nervous', 'tension', 'overwhelm', 'overwhelmed',
+    'tired', 'exhausted', 'fatigue', 'tired', 'burnout',
+    'confused', 'confused', 'lost', 'unsure',
+    // Wellness activities
+    'breathing', 'breathe', 'meditat', 'meditation', 'mindful', 'mindfulness',
+    'relax', 'relaxation', 'calm', 'calming', 'peace', 'peaceful',
+    'exercise', 'yoga', 'workout', 'fitness',
+    'sleep', 'sleeping', 'insomnia', 'rest',
+    'journal', 'journaling', 'gratitude',
+    'affirmation', 'positive',
+    // Mental health related
+    'mental', 'mental health', 'emotional', 'feelings', 'feeling', 'feel',
+    'therapist', 'therapy', 'counselor', 'counseling', 'psychologist',
+    'wellness', 'wellbeing', 'health', 'self-care',
+    'support', 'help', 'cope', 'coping', 'manage', 'managing',
+    'suicide', 'suicidal', 'crisis', 'emergency',
+    'motivation', 'motivate', 'inspire', 'inspiration',
+    'confidence', 'self-esteem', 'self worth',
+    'relationship', 'relationships', 'social',
+    'work', 'school', 'study', 'exam', 'test', 'pressure',
+    'grief', 'loss', 'pain',
+    'how are you', 'how do you', 'what should', 'can you help',
+    'i feel', 'i am', 'i think', 'i have', 'i want to'
+  ]
+  
+  // Check if message contains ANY wellness keywords
+  const hasWellnessContent = strictWellnessKeywords.some(keyword => lower.includes(keyword))
+  
+  // STRICT: If NO wellness keywords found, reject
+  if (!hasWellnessContent) {
+    return lumaResponses.off_topic
+  }
   
   // Check message history for patterns (context-aware)
   let sadCount = 0
@@ -51,7 +87,7 @@ function getLumaResponse(message: string, messageHistory?: Message[]): string {
     messageHistory.slice(-5).forEach((msg) => {
       if (msg.role === "user") {
         const msgLower = msg.content.toLowerCase()
-        if (msgLower.includes("sad") || msgLower.includes("sad") || msgLower.includes("depressed")) sadCount++
+        if (msgLower.includes("sad") || msgLower.includes("depressed")) sadCount++
         if (msgLower.includes("stress") || msgLower.includes("anxious")) stressCount++
       }
     })
@@ -72,6 +108,8 @@ function getLumaResponse(message: string, messageHistory?: Message[]): string {
   if (lower.includes("relax") || lower.includes("calm") || lower.includes("peace") || lower.includes("sleep")) return lumaResponses.relax
   if (lower.includes("motivat") || lower.includes("inspire") || lower.includes("give up") || lower.includes("hopeless")) return lumaResponses.motivation
   if (lower.includes("breath") || lower.includes("meditat") || lower.includes("mindful")) return lumaResponses.breathing
+  
+  // Default response for wellness-related messages
   return lumaResponses.default
 }
 
@@ -85,6 +123,7 @@ const initialMessages: Message[] = [
 ]
 
 export default function LumaPage() {
+  const { t } = useLanguage()
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [input, setInput] = useState("")
   const [typing, setTyping] = useState(false)
@@ -104,11 +143,15 @@ export default function LumaPage() {
     )
   }, [])
 
-  // Auto-scroll to latest message
+  // Auto-scroll to bottom when messages change
   useEffect(() => {
-    if (scrollEndRef.current) {
-      scrollEndRef.current.scrollIntoView({ behavior: "smooth" })
-    }
+    const timer = setTimeout(() => {
+      if (scrollEndRef.current) {
+        // Scroll the end ref into view with smooth behavior
+        scrollEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" })
+      }
+    }, 150)
+    return () => clearTimeout(timer)
   }, [messages, typing])
 
   const sendMessage = (text: string) => {
@@ -119,12 +162,13 @@ export default function LumaPage() {
       content: text,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     }
-    setMessages((prev) => [...prev, userMsg])
+    const updatedMessages = [...messages, userMsg]
+    setMessages(updatedMessages)
     setInput("")
     setTyping(true)
 
     setTimeout(() => {
-      const response = getLumaResponse(text, messages)
+      const response = getLumaResponse(text, updatedMessages)
       const lumaMsg: Message = {
         id: Date.now() + 1,
         role: "luma",
@@ -173,17 +217,17 @@ export default function LumaPage() {
             <BrandLogo className="h-10 w-10" imageClassName="rounded-full" />
             <div>
               <h1 className="text-lg font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>Luma</h1>
-              <p className="text-xs text-muted-foreground">AI Wellness Companion</p>
+              <p className="text-xs text-muted-foreground">{t('dashboard.chat')}</p>
             </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={resetChat} className="gap-1">
-            <RefreshCw className="h-3 w-3" /> New Chat
+            <RefreshCw className="h-3 w-3" /> {t('luma.new_chat')}
           </Button>
           <Link href="/resources">
             <Button variant="outline" size="sm" className="gap-1">
-              <BookOpen className="h-3 w-3" /> Resources
+              <BookOpen className="h-3 w-3" /> {t('luma.resources')}
             </Button>
           </Link>
         </div>
@@ -193,7 +237,7 @@ export default function LumaPage() {
       <Card className="flex flex-1 flex-col overflow-hidden bg-background">
         <ScrollArea className="flex-1 overflow-hidden">
           <div className="p-4">
-          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -234,7 +278,12 @@ export default function LumaPage() {
         {/* Quick Prompts */}
         <div className="border-t border-border px-4 pt-3">
           <div className="mb-2 flex flex-wrap gap-2">
-            {quickPrompts.map((prompt) => (
+            {[
+              { label: t('luma.stressed'), icon: Wind },
+              { label: t('luma.relax'), icon: Heart },
+              { label: t('luma.motivation'), icon: Sparkles },
+              { label: t('luma.breathing'), icon: Wind },
+            ].map((prompt) => (
               <Button
                 key={prompt.label}
                 variant="outline"
@@ -255,7 +304,7 @@ export default function LumaPage() {
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Tell Luma how you're feeling..."
+              placeholder={t('luma.placeholder')}
               className="flex-1"
               disabled={typing}
             />

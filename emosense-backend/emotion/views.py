@@ -78,7 +78,8 @@ def register(request):
             'message': 'Account created successfully',
             'token': token.key,
             'user_id': user.id,
-            'username': user.username
+            'username': user.username,
+            'first_name': user.first_name
         }, status=status.HTTP_201_CREATED)
     
     except Exception as e:

@@ -20,6 +20,45 @@ import {
   RotateCcw,
 } from "lucide-react"
 
+const affirmations = [
+  "I am worthy of happiness and peace. Every step I take brings me closer to emotional balance.",
+  "My feelings are valid, and I deserve to be heard and understood.",
+  "I choose to focus on what I can control and let go of what I cannot.",
+  "Today, I celebrate my progress, no matter how small it may seem.",
+  "I am growing stronger, wiser, and more compassionate with each day.",
+  "My mental health matters, and taking care of myself is an act of love.",
+  "I embrace my emotions as teachers that guide me toward healing.",
+  "I am enough, exactly as I am, right now.",
+  "My challenges do not define me; my resilience does.",
+  "I deserve kindness, especially from myself.",
+  "Today, I choose to be gentle with myself and celebrate my wins.",
+  "I am building a life filled with joy, purpose, and peace.",
+  "My past does not determine my future; I have the power to change.",
+  "I attract positivity and meaningful connections into my life.",
+  "I am grateful for my journey and the lessons it brings.",
+  "My emotions are temporary; I am stronger than any struggle.",
+  "Today, I choose progress over perfection.",
+  "I am worthy of love, respect, and all good things in life.",
+  "I take care of my mental health because I value myself.",
+  "My struggles make me stronger, and I am proud of how far I've come.",
+  "I radiate positive energy and inspire those around me.",
+  "Today, I choose to let go of anxiety and embrace peace.",
+  "I am creating a life that aligns with my true values.",
+  "My potential is limitless, and I am capable of amazing things.",
+  "I choose to respond to challenges with grace and strength.",
+  "I am building confidence in myself one day at a time.",
+  "My voice matters, and I deserve to be heard.",
+  "Today, I celebrate my unique qualities and talents.",
+  "I am on my way to becoming the best version of myself.",
+  "I choose self-compassion over self-criticism every single day.",
+]
+
+const getDailyAffirmation = (): string => {
+  const today = new Date()
+  const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000)
+  return affirmations[dayOfYear % affirmations.length]
+}
+
 const activities = [
   {
     title: "Share Your Joy",
@@ -187,6 +226,12 @@ function BreathingTimer() {
 }
 
 export default function WellnessPage() {
+  const [dailyAffirmation, setDailyAffirmation] = useState("")
+
+  useEffect(() => {
+    setDailyAffirmation(getDailyAffirmation())
+  }, [])
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
       <div className="mb-6 flex items-center gap-3">
@@ -249,7 +294,7 @@ export default function WellnessPage() {
           <CardContent>
             <div className="rounded-xl bg-primary/5 p-6 text-center">
               <p className="text-lg font-medium italic leading-relaxed text-foreground">
-                {'"I am worthy of happiness and peace. Every step I take brings me closer to emotional balance."'}
+                {`"${dailyAffirmation}"`}
               </p>
               <p className="mt-4 text-sm text-muted-foreground">
                 Remember: You are not alone in this journey.

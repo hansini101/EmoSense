@@ -2,27 +2,53 @@
 
 import Link from "next/link"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { BrandLogo } from "@/components/brand-logo"
+import { useLanguage } from "@/lib/language-context"
 import { Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
+import { useAuth } from "@/lib/auth-context"
 
 export default function RegisterPage() {
+  const { t } = useLanguage()
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [firstName, setFirstName] = useState("")
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const router = useRouter()
+  const { register } = useAuth()
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match")
+      return
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters")
+      return
+    }
+
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      toast.success("Account created! Welcome to EmoSense.")
-      window.location.href = "/dashboard"
-    }, 1500)
+    register(username, password, firstName)
+      .then(() => {
+        toast.success("Account created! Welcome to EmoSense.")
+        router.push("/dashboard")
+      })
+      .catch((error) => {
+        toast.error(error instanceof Error ? error.message : "Registration failed")
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   return (
@@ -36,47 +62,42 @@ export default function RegisterPage() {
         </div>
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Create Your Account</CardTitle>
+            <CardTitle className="text-2xl">{t('auth.register')}</CardTitle>
             <CardDescription>Start your emotional wellness journey today</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" placeholder="John" required />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" placeholder="Doe" required />
-                </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="firstName">{t('auth.fullname')}</Label>
+                <Input 
+                  id="firstName" 
+                  placeholder={t('auth.fullname')} 
+                  required 
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="email">University Email</Label>
-                <Input id="email" type="email" placeholder="you@university.edu" required />
+                <Label htmlFor="username">{t('auth.username')}</Label>
+                <Input 
+                  id="username" 
+                  type="text"
+                  placeholder={t('auth.username')} 
+                  required 
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                />
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="age">Age</Label>
-                <Select required>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your age range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="16-18">16-18</SelectItem>
-                    <SelectItem value="19-22">19-22</SelectItem>
-                    <SelectItem value="23-25">23-25</SelectItem>
-                    <SelectItem value="26-30">26-30</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('auth.password')}</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Create a strong password"
+                    placeholder={t('auth.password')}
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
                     type="button"
@@ -87,13 +108,26 @@ export default function RegisterPage() {
                   </button>
                 </div>
               </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="confirmPassword">{t('auth.confirm_password')}</Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showPassword ? "text" : "password"}
+                    placeholder={t('auth.confirm_password')}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                </div>
+              </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Creating account..." : "Create Account"}
+                {loading ? "Creating account..." : t('auth.register')}
               </Button>
             </form>
             <p className="mt-4 text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link href="/login" className="font-medium text-primary hover:underline">Sign in</Link>
+              {t('auth.already_member')}{" "}
+              <Link href="/login" className="font-medium text-primary hover:underline">{t('auth.signin')}</Link>
             </p>
           </CardContent>
         </Card>

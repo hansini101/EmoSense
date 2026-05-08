@@ -45,7 +45,7 @@ def predict_emotion(preprocessed_image):
     Predict emotion from preprocessed image
     
     Args:
-        preprocessed_image: numpy array of shape (1, 48, 48, 1)
+        preprocessed_image: numpy array of shape (1, 96, 96, 1)
     
     Returns:
         dict with emotion and confidence

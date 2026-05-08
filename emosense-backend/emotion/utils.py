@@ -64,7 +64,7 @@ def preprocess_image(image_file):
         image_file: Django UploadedFile object
     
     Returns:
-        numpy array of shape (1, 48, 48, 1) ready for model input
+        numpy array of shape (1, 96, 96, 1) ready for model input
     """
     try:
         # Ensure we read from the beginning of uploaded file.
@@ -101,14 +101,14 @@ def preprocess_image(image_file):
             x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
             face_roi = img_gray[y:y + h, x:x + w]
         
-        # Resize to model input size (48x48)
-        img_resized = cv2.resize(face_roi, (48, 48))
+        # Resize to model input size (96x96)
+        img_resized = cv2.resize(face_roi, (96, 96))
         
         # Normalize to [0, 1]
         img_normalized = img_resized.astype('float32') / 255.0
         
         # Reshape for model input: (batch_size, height, width, channels)
-        img_final = np.reshape(img_normalized, (1, 48, 48, 1))
+        img_final = np.reshape(img_normalized, (1, 96, 96, 1))
         
         return img_final
         
@@ -161,9 +161,9 @@ def extract_faces(image_file):
         processed_faces = []
         for (x, y, w, h) in faces:
             face_roi = img_gray[y:y+h, x:x+w]
-            face_resized = cv2.resize(face_roi, (48, 48))
+            face_resized = cv2.resize(face_roi, (96, 96))
             face_normalized = face_resized.astype('float32') / 255.0
-            face_reshaped = np.reshape(face_normalized, (1, 48, 48, 1))
+            face_reshaped = np.reshape(face_normalized, (1, 96, 96, 1))
             processed_faces.append(face_reshaped)
         
         return processed_faces

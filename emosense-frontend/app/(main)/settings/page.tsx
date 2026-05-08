@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
+import { useLanguage } from "@/lib/language-context"
+import { useAuth } from "@/lib/auth-context"
 import {
   ArrowLeft,
   Bell,
@@ -43,6 +45,8 @@ import { toast } from "sonner"
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme()
+  const { language, setLanguage } = useLanguage()
+  const { logout } = useAuth()
   const [settings, setSettings] = useState({
     notifications: true,
     emailReminders: true,
@@ -53,7 +57,6 @@ export default function SettingsPage() {
     lumaTypingIndicator: true,
     shareAnonymousData: true,
     showOnlineStatus: false,
-    language: "en",
     weeklyReport: true,
     dailyCheckIn: true,
   })
@@ -117,14 +120,16 @@ export default function SettingsPage() {
                   <p className="text-xs text-muted-foreground">Select interface language</p>
                 </div>
               </div>
-              <Select value={settings.language} onValueChange={(v) => setSettings({ ...settings, language: v })}>
+              <Select value={language} onValueChange={(v) => {
+                setLanguage(v as 'en' | 'si')
+                toast.success("Language updated")
+              }}>
                 <SelectTrigger className="w-32">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="si">Sinhala</SelectItem>
-                  <SelectItem value="ta">Tamil</SelectItem>
+                  <SelectItem value="si">සිංහල</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -287,11 +292,9 @@ export default function SettingsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            <Link href="/login">
-              <Button variant="outline" className="w-full gap-2">
-                <LogOut className="h-4 w-4" /> Log Out
-              </Button>
-            </Link>
+            <Button variant="outline" className="w-full gap-2" onClick={logout}>
+              <LogOut className="h-4 w-4" /> Log Out
+            </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="destructive" className="w-full gap-2">

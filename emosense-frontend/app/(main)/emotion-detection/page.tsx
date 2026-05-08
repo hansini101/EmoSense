@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
+import { ImageCropper } from "@/components/image-cropper"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Camera,
@@ -169,6 +170,7 @@ export default function EmotionDetectionPage() {
   const [analyzing, setAnalyzing] = useState(false)
   const [result, setResult] = useState<EmotionResult | null>(null)
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
+  const [showCropper, setShowCropper] = useState(false)
   const [feedbackGiven, setFeedbackGiven] = useState(false)
   const [accuracyRate, setAccuracyRate] = useState(92)
   const webcamRef = useRef<any>(null)
@@ -237,9 +239,16 @@ export default function EmotionDetectionPage() {
       const reader = new FileReader()
       reader.onload = (event) => {
         setUploadedImage(event.target?.result as string)
+        setShowCropper(true)
       }
       reader.readAsDataURL(file)
     }
+  }
+
+  const handleCropComplete = (croppedImage: string) => {
+    setUploadedImage(croppedImage)
+    setShowCropper(false)
+    toast.success("Image cropped successfully!")
   }
 
   const analyzeEmotion = () => {
@@ -257,6 +266,7 @@ export default function EmotionDetectionPage() {
   const resetAll = () => {
     setResult(null)
     setUploadedImage(null)
+    setShowCropper(false)
     setCameraError(null)
     setCameraActive(false)
     setFeedbackGiven(false)
@@ -356,51 +366,67 @@ export default function EmotionDetectionPage() {
                 </TabsContent>
 
                 <TabsContent value="upload" className="mt-4">
-                  <div
-                    className="relative aspect-video w-full cursor-pointer overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted transition-colors hover:border-primary/50"
-                    onClick={() => fileInputRef.current?.click()}
-                    role="button"
-                    tabIndex={0}
-                    aria-label="Upload image"
-                    onKeyDown={(e) => { if (e.key === 'Enter') fileInputRef.current?.click() }}
-                  >
-                    {uploadedImage ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={uploadedImage} alt="Uploaded preview" className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="flex h-full flex-col items-center justify-center gap-4 p-8">
-                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
-                          <ImageIcon className="h-8 w-8 text-primary" />
-                        </div>
-                        <div className="text-center">
-                          <p className="text-sm font-medium text-foreground">Click to upload an image</p>
-                          <p className="text-xs text-muted-foreground">JPG, PNG up to 10MB</p>
-                        </div>
+                  {showCropper && uploadedImage ? (
+                    <div className="flex flex-col gap-4">
+                      <p className="text-sm text-muted-foreground">Drag the crop box to select the area with your face</p>
+                      <ImageCropper 
+                        image={uploadedImage} 
+                        onCropComplete={handleCropComplete}
+                        onCancel={() => {
+                          setShowCropper(false)
+                          setUploadedImage(null)
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        className="relative aspect-video w-full cursor-pointer overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted transition-colors hover:border-primary/50"
+                        onClick={() => fileInputRef.current?.click()}
+                        role="button"
+                        tabIndex={0}
+                        aria-label="Upload image"
+                        onKeyDown={(e) => { if (e.key === 'Enter') fileInputRef.current?.click() }}
+                      >
+                        {uploadedImage ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={uploadedImage} alt="Uploaded preview" className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full flex-col items-center justify-center gap-4 p-8">
+                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+                              <ImageIcon className="h-8 w-8 text-primary" />
+                            </div>
+                            <div className="text-center">
+                              <p className="text-sm font-medium text-foreground">Click to upload an image</p>
+                              <p className="text-xs text-muted-foreground">JPG, PNG up to 10MB</p>
+                            </div>
+                          </div>
+                        )}
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileUpload}
+                          className="hidden"
+                        />
                       </div>
-                    )}
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                    />
-                  </div>
-                  <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-                    <Button
-                      onClick={() => analyzeEmotion()}
-                      className="flex-1 gap-2"
-                      disabled={!uploadedImage || analyzing}
-                    >
-                      <Zap className="h-4 w-4" />
-                      {analyzing ? "Analyzing..." : "Analyze Emotion"}
-                    </Button>
-                    {(uploadedImage || result) && (
-                      <Button variant="outline" onClick={resetAll} className="gap-2">
-                        <RefreshCw className="h-4 w-4" /> Reset
-                      </Button>
-                    )}
-                  </div>
+                      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button
+                          onClick={() => analyzeEmotion()}
+                          className="flex-1 gap-2"
+                          disabled={!uploadedImage || analyzing}
+                        >
+                          <Zap className="h-4 w-4" />
+                          {analyzing ? "Analyzing..." : "Analyze Emotion"}
+                        </Button>
+                        {(uploadedImage || result) && (
+                          <Button variant="outline" onClick={resetAll} className="gap-2">
+                            <RefreshCw className="h-4 w-4" /> Reset
+                          </Button>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </TabsContent>
               </Tabs>
             </CardHeader>
