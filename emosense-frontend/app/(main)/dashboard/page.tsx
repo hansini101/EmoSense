@@ -7,6 +7,10 @@ import { Progress } from "@/components/ui/progress"
 import { motion } from "framer-motion"
 import { AlertCircle, CheckCircle, Lightbulb, Wind, Shield } from "lucide-react"
 import { ActivityWellnessTracker } from "@/components/activity-wellness-tracker"
+import { useAuth } from "@/lib/auth-context"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+import { toast } from "sonner"
 import {
   Camera,
   Heart,
@@ -77,6 +81,22 @@ const quickActions = [
 ]
 
 export default function DashboardPage() {
+  const { isAdmin, loading } = useAuth()
+  const router = useRouter()
+
+  // Redirect admins away from user dashboard
+  useEffect(() => {
+    if (!loading && isAdmin) {
+      toast.error("Admin panel access only")
+      router.push('/admin')
+    }
+  }, [isAdmin, loading, router])
+
+  // Don't render if admin trying to access
+  if (loading || isAdmin) {
+    return null
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
       {/* Header */}

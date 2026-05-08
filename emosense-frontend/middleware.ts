@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   
   // Public routes that don't require authentication
-  const publicRoutes = ['/', '/login', '/register', '/forgot-password']
+  const publicRoutes = ['/', '/login', '/admin-login', '/register', '/forgot-password']
   const isPublicRoute = publicRoutes.includes(pathname) || pathname.startsWith('/(auth)')
 
   // Get auth token from cookies
@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // If authenticated user tries to access auth pages, redirect to dashboard
+  // If authenticated user tries to access login/register (but NOT admin-login), redirect to dashboard
   if ((pathname.startsWith('/login') || pathname.startsWith('/register')) && token) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }

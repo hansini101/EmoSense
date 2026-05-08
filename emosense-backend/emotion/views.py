@@ -155,6 +155,36 @@ def login(request):
         )
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_admin(request):
+    """
+    Check if authenticated user is an admin
+    
+    GET /api/check-admin/
+    Authorization: Token <auth_token>
+    """
+    try:
+        from .models import AdminUser
+        admin_user = AdminUser.objects.filter(user=request.user, is_active=True).first()
+        
+        if admin_user:
+            return Response({
+                'is_admin': True,
+                'role': admin_user.role
+            })
+        else:
+            return Response(
+                {'is_admin': False},
+                status=status.HTTP_403_FORBIDDEN
+            )
+    except Exception as e:
+        return Response(
+            {'is_admin': False},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+
 # ========================
 # 🧠 EMOTION DETECTION (WITH PERSONALIZATION)
 # ========================

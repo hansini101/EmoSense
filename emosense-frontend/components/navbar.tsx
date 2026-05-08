@@ -7,6 +7,8 @@ import { BrandLogo } from "@/components/brand-logo"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { useAuth } from "@/lib/auth-context"
+import { useLanguage } from "@/lib/language-context"
 import {
   Brain,
   Menu,
@@ -20,7 +22,15 @@ import {
   HelpCircle,
   BookOpen,
   Phone,
+  LogOut,
+  Globe,
 } from "lucide-react"
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 const navLinks = [
   { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
@@ -52,6 +62,8 @@ const moreLinks = [
 export function Navbar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
+  const { isAuthenticated, logout, user, isAdmin } = useAuth()
+  const { language, setLanguage } = useLanguage()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
@@ -84,12 +96,58 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <div className="hidden md:flex md:items-center md:gap-2">
-            <Link href="/login">
-              <Button variant="ghost" size="sm">Log in</Button>
-            </Link>
-            <Link href="/register">
-              <Button size="sm">Sign up</Button>
-            </Link>
+            {isAuthenticated ? (
+              <>
+                {/* Language Switcher */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-1.5">
+                      <Globe className="h-4 w-4" />
+                      {language === 'en' ? 'EN' : 'SI'}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setLanguage('en')} className={language === 'en' ? 'bg-accent' : ''}>
+                      English
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setLanguage('si')} className={language === 'si' ? 'bg-accent' : ''}>
+                      Sinhala (සිංහල)
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* User Menu */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-1.5">
+                      <User className="h-4 w-4" />
+                      {user?.first_name || user?.username}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile">Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/settings">Settings</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={logout} className="text-red-600 cursor-pointer">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button variant="ghost" size="sm">Log in</Button>
+                </Link>
+                <Link href="/register">
+                  <Button size="sm">Sign up</Button>
+                </Link>
+              </>
+            )}
           </div>
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild className="md:hidden">
@@ -101,28 +159,71 @@ export function Navbar() {
             <SheetContent side="right" className="w-72">
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
               <div className="flex flex-col gap-1 pt-6">
-                {moreLinks.map((link) => {
-                  const isActive = pathname === link.href
-                  return (
-                    <Link key={link.href} href={link.href} onClick={() => setOpen(false)}>
-                      <Button
-                        variant={isActive ? "default" : "ghost"}
+                {isAuthenticated ? (
+                  <>
+                    {moreLinks.map((link) => {
+                      const isActive = pathname === link.href
+                      return (
+                        <Link key={link.href} href={link.href} onClick={() => setOpen(false)}>
+                          <Button
+                            variant={isActive ? "default" : "ghost"}
+                            className="w-full justify-start gap-2"
+                          >
+                            <link.icon className="h-4 w-4" />
+                            {link.label}
+                          </Button>
+                        </Link>
+                      )
+                    })}
+                    <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
+                      {/* Language Switcher Mobile */}
+                      <Button 
+                        variant="outline" 
                         className="w-full justify-start gap-2"
+                        onClick={() => setLanguage(language === 'en' ? 'si' : 'en')}
                       >
-                        <link.icon className="h-4 w-4" />
-                        {link.label}
+                        <Globe className="h-4 w-4" />
+                        {language === 'en' ? 'Switch to Sinhala' : 'Switch to English'}
                       </Button>
-                    </Link>
-                  )
-                })}
-                <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
-                  <Link href="/login" onClick={() => setOpen(false)}>
-                    <Button variant="outline" className="w-full">Log in</Button>
-                  </Link>
-                  <Link href="/register" onClick={() => setOpen(false)}>
-                    <Button className="w-full">Sign up</Button>
-                  </Link>
-                </div>
+                      <Button 
+                        variant="destructive" 
+                        className="w-full justify-start gap-2"
+                        onClick={() => {
+                          logout()
+                          setOpen(false)
+                        }}
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Logout
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {moreLinks.map((link) => {
+                      const isActive = pathname === link.href
+                      return (
+                        <Link key={link.href} href={link.href} onClick={() => setOpen(false)}>
+                          <Button
+                            variant={isActive ? "default" : "ghost"}
+                            className="w-full justify-start gap-2"
+                          >
+                            <link.icon className="h-4 w-4" />
+                            {link.label}
+                          </Button>
+                        </Link>
+                      )
+                    })}
+                    <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
+                      <Link href="/login" onClick={() => setOpen(false)}>
+                        <Button variant="outline" className="w-full">Log in</Button>
+                      </Link>
+                      <Link href="/register" onClick={() => setOpen(false)}>
+                        <Button className="w-full">Sign up</Button>
+                      </Link>
+                    </div>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>
