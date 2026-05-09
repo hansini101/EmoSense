@@ -57,6 +57,35 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# MongoDB Configuration with mongoengine
+import mongoengine
+
+MONGO_USER = os.getenv('MONGO_USER', '')
+MONGO_PASSWORD = os.getenv('MONGO_PASSWORD', '')
+MONGO_HOST = os.getenv('MONGO_HOST', 'localhost')
+MONGO_PORT = int(os.getenv('MONGO_PORT', '27017'))
+MONGO_DB = os.getenv('MONGO_DB', 'emosense_db')
+MONGO_AUTH_SOURCE = os.getenv('MONGO_AUTH_SOURCE', 'admin')
+
+# Connect to MongoDB
+if MONGO_USER and MONGO_PASSWORD:
+    mongoengine.connect(
+        db=MONGO_DB,
+        host=MONGO_HOST,
+        port=MONGO_PORT,
+        username=MONGO_USER,
+        password=MONGO_PASSWORD,
+        authentication_source=MONGO_AUTH_SOURCE,
+        retryWrites=False
+    )
+else:
+    mongoengine.connect(
+        db=MONGO_DB,
+        host=MONGO_HOST,
+        port=MONGO_PORT
+    )
+
+# Keep SQLite for Django auth
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
