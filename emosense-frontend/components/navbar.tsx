@@ -33,37 +33,37 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 const navLinks = [
-  { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
-  { href: "/emotion-detection", label: "Detect", icon: Camera },
-  { href: "/wellness", label: "Wellness", icon: Heart },
-  { href: "/luma", label: "Luma AI", icon: MessageCircle },
-  { href: "/mood-history", label: "History", icon: Clock },
-  { href: "/resources", label: "Resources", icon: BookOpen },
-  { href: "/profile", label: "Profile", icon: User },
+  { href: "/dashboard", labelKey: "nav.dashboard", icon: BarChart3 },
+  { href: "/emotion-detection", labelKey: "nav.detect", icon: Camera },
+  { href: "/wellness", labelKey: "nav.wellness", icon: Heart },
+  { href: "/luma", labelKey: "nav.luma", icon: MessageCircle },
+  { href: "/mood-history", labelKey: "nav.history", icon: Clock },
+  { href: "/resources", labelKey: "nav.resources", icon: BookOpen },
+  { href: "/profile", labelKey: "nav.profile", icon: User },
 ]
 
 const moreLinks = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/dashboard", label: "Dashboard", icon: BarChart3 },
-  { href: "/emotion-detection", label: "Emotion Detection", icon: Camera },
-  { href: "/wellness", label: "Wellness", icon: Heart },
-  { href: "/luma", label: "Talk to Luma", icon: MessageCircle },
-  { href: "/mood-history", label: "Mood History", icon: Clock },
-  { href: "/resources", label: "Resources", icon: BookOpen },
-  { href: "/booking", label: "Book Counselor", icon: Phone },
-  { href: "/profile", label: "Profile", icon: User },
-  { href: "/settings", label: "Settings", icon: HelpCircle },
-  { href: "/privacy", label: "Privacy & Data", icon: Brain },
-  { href: "/contact", label: "Contact Us", icon: Phone },
-  { href: "/faq", label: "FAQ", icon: HelpCircle },
-  { href: "/about", label: "About", icon: Brain },
+  { href: "/", labelKey: "nav.home", icon: Home },
+  { href: "/dashboard", labelKey: "nav.dashboard", icon: BarChart3 },
+  { href: "/emotion-detection", labelKey: "nav.detect", icon: Camera },
+  { href: "/wellness", labelKey: "nav.wellness", icon: Heart },
+  { href: "/luma", labelKey: "nav.luma", icon: MessageCircle },
+  { href: "/mood-history", labelKey: "nav.history", icon: Clock },
+  { href: "/resources", labelKey: "nav.resources", icon: BookOpen },
+  { href: "/booking", labelKey: "nav.book", icon: Phone },
+  { href: "/profile", labelKey: "nav.profile", icon: User },
+  { href: "/settings", labelKey: "nav.settings", icon: HelpCircle },
+  { href: "/privacy", labelKey: "nav.privacy", icon: Brain },
+  { href: "/contact", labelKey: "nav.contact", icon: Phone },
+  { href: "/faq", labelKey: "nav.faq", icon: HelpCircle },
+  { href: "/about", labelKey: "nav.about", icon: Brain },
 ]
 
 export function Navbar() {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const { isAuthenticated, logout, user, isAdmin } = useAuth()
-  const { language, setLanguage } = useLanguage()
+  const { language, setLanguage, t } = useLanguage()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
@@ -86,7 +86,7 @@ export function Navbar() {
                   className="gap-1.5"
                 >
                   <link.icon className="h-4 w-4" />
-                  {link.label}
+                  {t(link.labelKey)}
                 </Button>
               </Link>
             )
@@ -126,14 +126,14 @@ export function Navbar() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Link href="/profile">Profile</Link>
+                      <Link href="/profile">{t('nav.profile')}</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/settings">Settings</Link>
+                      <Link href="/settings">{t('nav.settings')}</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={logout} className="text-red-600 cursor-pointer">
                       <LogOut className="h-4 w-4 mr-2" />
-                      Logout
+                      {t('nav.logout')}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -141,10 +141,10 @@ export function Navbar() {
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" size="sm">Log in</Button>
+                  <Button variant="ghost" size="sm">{t('nav.login')}</Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm">Sign up</Button>
+                  <Button size="sm">{t('nav.signup')}</Button>
                 </Link>
               </>
             )}
@@ -170,7 +170,7 @@ export function Navbar() {
                             className="w-full justify-start gap-2"
                           >
                             <link.icon className="h-4 w-4" />
-                            {link.label}
+                            {t(link.labelKey)}
                           </Button>
                         </Link>
                       )
@@ -183,7 +183,7 @@ export function Navbar() {
                         onClick={() => setLanguage(language === 'en' ? 'si' : 'en')}
                       >
                         <Globe className="h-4 w-4" />
-                        {language === 'en' ? 'Switch to Sinhala' : 'Switch to English'}
+                        {language === 'en' ? t('nav.switch_sinhala') : t('nav.switch_english')}
                       </Button>
                       <Button 
                         variant="destructive" 
@@ -194,7 +194,7 @@ export function Navbar() {
                         }}
                       >
                         <LogOut className="h-4 w-4" />
-                        Logout
+                        {t('nav.logout')}
                       </Button>
                     </div>
                   </>
@@ -209,17 +209,17 @@ export function Navbar() {
                             className="w-full justify-start gap-2"
                           >
                             <link.icon className="h-4 w-4" />
-                            {link.label}
+                            {t(link.labelKey)}
                           </Button>
                         </Link>
                       )
                     })}
                     <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
                       <Link href="/login" onClick={() => setOpen(false)}>
-                        <Button variant="outline" className="w-full">Log in</Button>
+                        <Button variant="outline" className="w-full">{t('nav.login')}</Button>
                       </Link>
                       <Link href="/register" onClick={() => setOpen(false)}>
-                        <Button className="w-full">Sign up</Button>
+                        <Button className="w-full">{t('nav.signup')}</Button>
                       </Link>
                     </div>
                   </>

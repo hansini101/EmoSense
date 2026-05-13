@@ -11,6 +11,7 @@ import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { toast } from "sonner"
+import { useLanguage } from "@/lib/language-context"
 import {
   Camera,
   Heart,
@@ -81,16 +82,18 @@ const quickActions = [
 ]
 
 export default function DashboardPage() {
+  const { language } = useLanguage()
+  const isSinhala = language === "si"
   const { isAdmin, loading } = useAuth()
   const router = useRouter()
 
   // Redirect admins away from user dashboard
   useEffect(() => {
     if (!loading && isAdmin) {
-      toast.error("Admin panel access only")
+      toast.error(isSinhala ? "Admin පැනලයට පමණක් ප්‍රවේශය ඇත" : "Admin panel access only")
       router.push('/admin')
     }
-  }, [isAdmin, loading, router])
+  }, [isAdmin, isSinhala, loading, router])
 
   // Don't render if admin trying to access
   if (loading || isAdmin) {
@@ -108,13 +111,13 @@ export default function DashboardPage() {
       >
         <div>
           <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-            Welcome Back
+            {isSinhala ? "නැවත සාදරයෙන් පිළිගනිමු" : "Welcome Back"}
           </h1>
-          <p className="mt-1 text-muted-foreground">{"Here's an overview of your emotional wellness journey."}</p>
+          <p className="mt-1 text-muted-foreground">{isSinhala ? "ඔබගේ චිත්තවේගීය සුවතා ගමනේ සාරාංශයක් මෙන්න." : "Here's an overview of your emotional wellness journey."}</p>
         </div>
         <Link href="/emotion-detection">
           <Button className="gap-2">
-            <Camera className="h-4 w-4" /> New Detection
+            <Camera className="h-4 w-4" /> {isSinhala ? "නව හඳුනාගැනීමක්" : "New Detection"}
           </Button>
         </Link>
       </motion.div>
@@ -134,7 +137,15 @@ export default function DashboardPage() {
                   <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${action.color}`}>
                     <action.icon className="h-6 w-6" />
                   </div>
-                  <span className="text-sm font-medium text-foreground">{action.label}</span>
+                  <span className="text-sm font-medium text-foreground">{isSinhala
+                    ? ({
+                        "Detect Emotion": "හැඟීම හඳුනාගන්න",
+                        "Talk to Luma": "Luma සමඟ කතා කරන්න",
+                        "Wellness Hub": "සුවතා මධ්‍යස්ථානය",
+                        "View History": "ඉතිහාසය බලන්න",
+                        "Privacy & Ethics": "පුද්ගලිකත්වය සහ සදාචාරය",
+                      } as Record<string, string>)[action.label] ?? action.label
+                    : action.label}</span>
                 </CardContent>
               </Card>
             </Link>
@@ -151,11 +162,11 @@ export default function DashboardPage() {
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5 text-primary" /> Weekly Mood Trend
                 </CardTitle>
-                <CardDescription>Your emotional patterns this week</CardDescription>
+                <CardDescription>{isSinhala ? "මේ සතියේ ඔබගේ චිත්තවේගීය රටා" : "Your emotional patterns this week"}</CardDescription>
               </div>
               <Link href="/mood-history">
                 <Button variant="ghost" size="sm" className="gap-1">
-                  Details <ArrowRight className="h-3 w-3" />
+                  {isSinhala ? "විස්තර" : "Details"} <ArrowRight className="h-3 w-3" />
                 </Button>
               </Link>
             </div>
@@ -186,8 +197,8 @@ export default function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Emotion Distribution</CardTitle>
-            <CardDescription>Overall breakdown</CardDescription>
+            <CardTitle>{isSinhala ? "හැඟීම් බෙදාහැරීම" : "Emotion Distribution"}</CardTitle>
+            <CardDescription>{isSinhala ? "සමස්ත ව්‍යාප්තිය" : "Overall breakdown"}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-48">
@@ -232,7 +243,7 @@ export default function DashboardPage() {
       {/* AI Decision Engine: Smart Suggestions */}
       <div className="mb-8">
         <h2 className="mb-4 text-xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-          Personalized Wellness Suggestions
+          {isSinhala ? "පුද්ගලික සුවතා යෝජනා" : "Personalized Wellness Suggestions"}
         </h2>
         <div className="space-y-3">
           <motion.div
@@ -244,13 +255,13 @@ export default function DashboardPage() {
               <CardContent className="flex items-start gap-3 p-4">
                 <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-yellow-600 dark:text-yellow-400" />
                 <div className="flex-1">
-                  <p className="font-medium text-foreground">Consider stronger support</p>
+                  <p className="font-medium text-foreground">{isSinhala ? "වඩා ශක්තිමත් සහාය සලකා බලන්න" : "Consider stronger support"}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    You've been feeling stressed frequently. Booking a counselor can help develop strategies.
+                    {isSinhala ? "ඔබට නිතරම පීඩනයක් දැනෙනවා. උපදේශකයෙකු වෙන්කරගැනීමෙන් ක්‍රමෝපායන් වර්ධනය කරගැනීමට උදව් විය හැක." : "You've been feeling stressed frequently. Booking a counselor can help develop strategies."}
                   </p>
                   <Link href="/booking" className="mt-2 inline-block">
                     <Button size="sm" variant="outline" className="gap-1">
-                      <Heart className="h-3 w-3" /> Book Counselor
+                      <Heart className="h-3 w-3" /> {isSinhala ? "උපදේශකයෙකු වෙන්කරන්න" : "Book Counselor"}
                     </Button>
                   </Link>
                 </div>
@@ -267,13 +278,13 @@ export default function DashboardPage() {
               <CardContent className="flex items-start gap-3 p-4">
                 <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
                 <div className="flex-1">
-                  <p className="font-medium text-foreground">You're improving!</p>
+                  <p className="font-medium text-foreground">{isSinhala ? "ඔබ දියුණුවෙමින් සිටී!" : "You're improving!"}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Your mood improved 15% this week. Keep journaling—it's helping.
+                    {isSinhala ? "මේ සතියේ ඔබගේ මනෝභාවය 15% කින් වැඩිදියුණු විය. ජර්නල් කිරීම දිගටම කරගෙන යන්න—එය උදව් වෙනවා." : "Your mood improved 15% this week. Keep journaling—it's helping."}
                   </p>
                   <Link href="/wellness/gratitude-journal" className="mt-2 inline-block">
                     <Button size="sm" variant="outline" className="gap-1">
-                      <Lightbulb className="h-3 w-3" /> Continue Journaling
+                      <Lightbulb className="h-3 w-3" /> {isSinhala ? "ජර්නල් කිරීම දිගටම" : "Continue Journaling"}
                     </Button>
                   </Link>
                 </div>
@@ -290,13 +301,13 @@ export default function DashboardPage() {
               <CardContent className="flex items-start gap-3 p-4">
                 <Wind className="mt-0.5 h-5 w-5 shrink-0 text-purple-600 dark:text-purple-400" />
                 <div className="flex-1">
-                  <p className="font-medium text-foreground">Evening wind-down tip</p>
+                  <p className="font-medium text-foreground">{isSinhala ? "සවස ලිහිල් වීමේ උපදෙස" : "Evening wind-down tip"}</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    You feel more negative in evenings. Try breathing exercises before bed.
+                    {isSinhala ? "සවසට ඔබට වැඩි negative හැඟීම් දැනෙනවා. නිදාගන්න කලින් හුස්ම ව්‍යායාම උත්සාහ කරන්න." : "You feel more negative in evenings. Try breathing exercises before bed."}
                   </p>
                   <Link href="/wellness" className="mt-2 inline-block">
                     <Button size="sm" variant="outline" className="gap-1">
-                      <Wind className="h-3 w-3" /> Breathing Exercise
+                      <Wind className="h-3 w-3" /> {isSinhala ? "හුස්ම ව්‍යායාම" : "Breathing Exercise"}
                     </Button>
                   </Link>
                 </div>
@@ -317,13 +328,13 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-primary" /> Recent Sessions
+                  <Clock className="h-5 w-5 text-primary" /> {isSinhala ? "නවතම සැසි" : "Recent Sessions"}
                 </CardTitle>
-                <CardDescription>Your latest emotion detections</CardDescription>
+                <CardDescription>{isSinhala ? "ඔබගේ නවතම හැඟීම් හඳුනාගැනීම්" : "Your latest emotion detections"}</CardDescription>
               </div>
               <Link href="/mood-history">
                 <Button variant="ghost" size="sm" className="gap-1">
-                  View All <ArrowRight className="h-3 w-3" />
+                  {isSinhala ? "සියල්ල බලන්න" : "View All"} <ArrowRight className="h-3 w-3" />
                 </Button>
               </Link>
             </div>
@@ -355,9 +366,9 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-primary" /> Weekly Goals
+                  <Target className="h-5 w-5 text-primary" /> {isSinhala ? "සතිපතා ඉලක්ක" : "Weekly Goals"}
                 </CardTitle>
-                <CardDescription>Track your wellness progress</CardDescription>
+                <CardDescription>{isSinhala ? "ඔබගේ සුවතා ප්‍රගතිය නිරීක්ෂණය කරන්න" : "Track your wellness progress"}</CardDescription>
               </div>
               <Link href="/wellness/goals">
                 <Button variant="ghost" size="sm" className="gap-1">

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useLanguage } from "@/lib/language-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -87,6 +88,8 @@ const timeSlots = [
 ]
 
 export default function BookingPage() {
+  const { language } = useLanguage()
+  const isSinhala = language === "si"
   const [selectedCounselor, setSelectedCounselor] = useState<number | null>(null)
   const [date, setDate] = useState<Date | undefined>(undefined)
   const [selectedTime, setSelectedTime] = useState("")
@@ -97,10 +100,10 @@ export default function BookingPage() {
 
   const validate = (): string[] => {
     const errs: string[] = []
-    if (!selectedCounselor) errs.push("Please select a counselor.")
-    if (!date) errs.push("Please select a date.")
-    if (!selectedTime) errs.push("Please select a time slot.")
-    if (!sessionType) errs.push("Please select a session type.")
+    if (!selectedCounselor) errs.push(isSinhala ? "කරුණාකර උපදේශකයෙකු තෝරන්න." : "Please select a counselor.")
+    if (!date) errs.push(isSinhala ? "කරුණාකර දිනයක් තෝරන්න." : "Please select a date.")
+    if (!selectedTime) errs.push(isSinhala ? "කරුණාකර වේලාවක් තෝරන්න." : "Please select a time slot.")
+    if (!sessionType) errs.push(isSinhala ? "කරුණාකර සැසි වර්ගයක් තෝරන්න." : "Please select a session type.")
     return errs
   }
 
@@ -118,7 +121,7 @@ export default function BookingPage() {
   const confirmBooking = () => {
     setShowConfirmDialog(false)
     setBooked(true)
-    toast.success("Appointment booked successfully!")
+    toast.success(isSinhala ? "හමුවීම සාර්ථකව වෙන්කරන ලදී!" : "Appointment booked successfully!")
   }
 
   const resetBooking = () => {
@@ -147,37 +150,37 @@ export default function BookingPage() {
                 <CheckCircle className="h-8 w-8 text-foreground" />
               </motion.div>
               <h1 className="text-2xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-                Booking Confirmed!
+                {isSinhala ? "වෙන්කිරීම තහවුරු විය!" : "Booking Confirmed!"}
               </h1>
-              <p className="text-muted-foreground">Your appointment has been scheduled.</p>
+              <p className="text-muted-foreground">{isSinhala ? "ඔබගේ හමුවීම කාලසටහන් කර ඇත." : "Your appointment has been scheduled."}</p>
               <div className="w-full rounded-lg border border-border p-4 text-left">
                 <div className="flex flex-col gap-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Counselor:</span>
+                    <span className="text-muted-foreground">{isSinhala ? "උපදේශකයා:" : "Counselor:"}</span>
                     <span className="font-medium text-foreground">{counselor?.name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Date:</span>
+                    <span className="text-muted-foreground">{isSinhala ? "දිනය:" : "Date:"}</span>
                     <span className="font-medium text-foreground">
                       {date?.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Time:</span>
+                    <span className="text-muted-foreground">{isSinhala ? "වේලාව:" : "Time:"}</span>
                     <span className="font-medium text-foreground">{selectedTime}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Type:</span>
+                    <span className="text-muted-foreground">{isSinhala ? "වර්ගය:" : "Type:"}</span>
                     <span className="font-medium text-foreground">{sessionType}</span>
                   </div>
                 </div>
               </div>
               <div className="flex gap-3">
                 <Link href="/dashboard">
-                  <Button>Go to Dashboard</Button>
+                  <Button>{isSinhala ? "උපකරණ පුවරුවට යන්න" : "Go to Dashboard"}</Button>
                 </Link>
                 <Button variant="outline" onClick={resetBooking}>
-                  Book Another
+                  {isSinhala ? "තවත් එකක් වෙන්කරන්න" : "Book Another"}
                 </Button>
               </div>
             </CardContent>
@@ -197,19 +200,19 @@ export default function BookingPage() {
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-            Book a Counselor
+            {isSinhala ? "උපදේශකයෙකු වෙන්කරන්න" : "Book a Counselor"}
           </h1>
-          <p className="mt-1 text-muted-foreground">Schedule a session with a verified counselor or psychologist</p>
+          <p className="mt-1 text-muted-foreground">{isSinhala ? "සත්‍යාපිත උපදේශකයෙකු හෝ මනෝවිද්‍යාඥයෙකු සමඟ සැසියක් වෙන්කරන්න" : "Schedule a session with a verified counselor or psychologist"}</p>
         </div>
       </div>
 
       <Tabs defaultValue="counselors" className="space-y-6">
         <TabsList>
           <TabsTrigger value="counselors" className="gap-2">
-            <User className="h-4 w-4" /> Choose Counselor
+            <User className="h-4 w-4" /> {isSinhala ? "උපදේශකයෙකු තෝරන්න" : "Choose Counselor"}
           </TabsTrigger>
           <TabsTrigger value="schedule" className="gap-2" disabled={!selectedCounselor}>
-            <CalendarIcon className="h-4 w-4" /> Schedule
+            <CalendarIcon className="h-4 w-4" /> {isSinhala ? "කාලසටහන" : "Schedule"}
           </TabsTrigger>
         </TabsList>
 
@@ -236,7 +239,7 @@ export default function BookingPage() {
                       </div>
                       <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground">
                         <span className="flex items-center gap-1">
-                          <Star className="h-3 w-3" className="text-yellow-500" /> {counselor.rating} ({counselor.reviews})
+                          <Star className="h-3 w-3 text-yellow-500" /> {counselor.rating} ({counselor.reviews})
                         </span>
                         <span className="flex items-center gap-1">
                           {counselor.mode.includes("Online") ? <Video className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}
@@ -245,7 +248,7 @@ export default function BookingPage() {
                       </div>
                       <div className="mt-2 flex items-center gap-1">
                         <Clock className="h-3 w-3 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">Available: {counselor.available.join(", ")}</span>
+                        <span className="text-xs text-muted-foreground">{isSinhala ? "ලබා ගත හැකි" : "Available"}: {counselor.available.join(", ")}</span>
                       </div>
                     </div>
                   </div>
@@ -259,7 +262,7 @@ export default function BookingPage() {
           <div className="grid gap-6 lg:grid-cols-3">
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">Select Date</CardTitle>
+                <CardTitle className="text-base">{isSinhala ? "දිනය තෝරන්න" : "Select Date"}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Calendar
@@ -274,7 +277,7 @@ export default function BookingPage() {
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">Select Time</CardTitle>
+                <CardTitle className="text-base">{isSinhala ? "වේලාව තෝරන්න" : "Select Time"}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 gap-2">
@@ -295,24 +298,24 @@ export default function BookingPage() {
 
             <Card>
               <CardHeader className="pb-2">
-                <CardTitle className="text-base">Session Details</CardTitle>
+                <CardTitle className="text-base">{isSinhala ? "සැසි විස්තර" : "Session Details"}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col gap-4">
                   <div className="flex flex-col gap-2">
-                    <Label>Session Type</Label>
+                    <Label>{isSinhala ? "සැසි වර්ගය" : "Session Type"}</Label>
                     <Select value={sessionType} onValueChange={setSessionType}>
-                      <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={isSinhala ? "වර්ගය තෝරන්න" : "Select type"} /></SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Video Call">Video Call</SelectItem>
-                        <SelectItem value="In-Person">In-Person</SelectItem>
-                        <SelectItem value="Phone Call">Phone Call</SelectItem>
+                        <SelectItem value="Video Call">{isSinhala ? "වීඩියෝ ඇමතුම" : "Video Call"}</SelectItem>
+                        <SelectItem value="In-Person">{isSinhala ? "ස්ථානීය" : "In-Person"}</SelectItem>
+                        <SelectItem value="Phone Call">{isSinhala ? "දුරකථන ඇමතුම" : "Phone Call"}</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="notes">Notes (optional)</Label>
-                    <Textarea id="notes" placeholder="Briefly describe what you'd like to discuss..." rows={3} />
+                    <Label htmlFor="notes">{isSinhala ? "සටහන් (විකල්ප)" : "Notes (optional)"}</Label>
+                    <Textarea id="notes" placeholder={isSinhala ? "ඔබට කතා කිරීමට කැමති දෙය කෙටියෙන් විස්තර කරන්න..." : "Briefly describe what you'd like to discuss..."} rows={3} />
                   </div>
                   {errors.length > 0 && (
                     <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-2">
@@ -322,7 +325,7 @@ export default function BookingPage() {
                     </div>
                   )}
                   <Button onClick={handleBookClick} className="gap-2" disabled={!date || !selectedTime || !sessionType}>
-                    <CheckCircle className="h-4 w-4" /> Confirm Booking
+                    <CheckCircle className="h-4 w-4" /> {isSinhala ? "වෙන්කිරීම තහවුරු කරන්න" : "Confirm Booking"}
                   </Button>
                 </div>
               </CardContent>
@@ -335,37 +338,37 @@ export default function BookingPage() {
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Your Booking</DialogTitle>
+            <DialogTitle>{isSinhala ? "ඔබේ වෙන්කිරීම තහවුරු කරන්න" : "Confirm Your Booking"}</DialogTitle>
             <DialogDescription>
-              Please review your appointment details before confirming.
+              {isSinhala ? "තහවුරු කිරීමට පෙර ඔබගේ හමුවීමේ විස්තර නැවත බලන්න." : "Please review your appointment details before confirming."}
             </DialogDescription>
           </DialogHeader>
           <div className="rounded-lg border border-border p-4">
             <div className="flex flex-col gap-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Counselor:</span>
+                <span className="text-muted-foreground">{isSinhala ? "උපදේශකයා:" : "Counselor:"}</span>
                 <span className="font-medium text-foreground">{counselor?.name}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Date:</span>
+                <span className="text-muted-foreground">{isSinhala ? "දිනය:" : "Date:"}</span>
                 <span className="font-medium text-foreground">
                   {date?.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Time:</span>
+                <span className="text-muted-foreground">{isSinhala ? "වේලාව:" : "Time:"}</span>
                 <span className="font-medium text-foreground">{selectedTime}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Type:</span>
+                <span className="text-muted-foreground">{isSinhala ? "වර්ගය:" : "Type:"}</span>
                 <span className="font-medium text-foreground">{sessionType}</span>
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>{isSinhala ? "අවලංගු කරන්න" : "Cancel"}</Button>
             <Button onClick={confirmBooking} className="gap-2">
-              <CheckCircle className="h-4 w-4" /> Confirm
+              <CheckCircle className="h-4 w-4" /> {isSinhala ? "තහවුරු කරන්න" : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>

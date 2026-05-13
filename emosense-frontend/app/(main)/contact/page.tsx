@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { ArrowLeft, Send, Mail, Phone, MapPin, Clock, CheckCircle } from "lucide-react"
 import { toast } from "sonner"
+import { useLanguage, type Language } from "@/lib/language-context"
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -23,7 +24,100 @@ const contactSchema = z.object({
 
 type ContactFormValues = z.infer<typeof contactSchema>
 
+type ContactCopy = {
+  title: string
+  subtitle: string
+  contactInfo: Array<{ icon: typeof Mail; label: string; value: string; href: string }>
+  formTitle: string
+  formDescription: string
+  sentTitle: string
+  sentBody: string
+  sentButton: string
+  name: string
+  namePlaceholder: string
+  email: string
+  emailPlaceholder: string
+  subject: string
+  subjectPlaceholder: string
+  message: string
+  messagePlaceholder: string
+  send: string
+  sending: string
+  subjectOptions: Array<{ value: string; label: string }>
+}
+
+const copy: Record<Language, ContactCopy> = {
+  en: {
+    title: "Contact Us",
+    subtitle: "Have a question or feedback? We'd love to hear from you.",
+    contactInfo: [
+      { icon: Mail, label: "Email", value: "support@emosense.app", href: "mailto:support@emosense.app" },
+      { icon: Phone, label: "Phone", value: "+94 11 234 5678", href: "tel:+94112345678" },
+      { icon: MapPin, label: "Address", value: "Student Wellness Center, University Campus, Colombo", href: "#" },
+      { icon: Clock, label: "Hours", value: "Mon-Fri: 8 AM - 6 PM", href: "#" },
+    ],
+    formTitle: "Send us a Message",
+    formDescription: "Fill out the form below and we will get back to you within 24 hours.",
+    sentTitle: "Message Sent!",
+    sentBody: "Thank you for reaching out. Our team will review your message and respond within 24 hours.",
+    sentButton: "Send Another Message",
+    name: "Full Name",
+    namePlaceholder: "Your name",
+    email: "Email",
+    emailPlaceholder: "you@university.edu",
+    subject: "Subject",
+    subjectPlaceholder: "Select a subject",
+    message: "Message",
+    messagePlaceholder: "How can we help you?",
+    send: "Send Message",
+    sending: "Sending...",
+    subjectOptions: [
+      { value: "general", label: "General Inquiry" },
+      { value: "technical", label: "Technical Support" },
+      { value: "feedback", label: "Feedback" },
+      { value: "counseling", label: "Counseling Services" },
+      { value: "privacy", label: "Privacy Concerns" },
+      { value: "other", label: "Other" },
+    ],
+  },
+  si: {
+    title: "අප අමතන්න",
+    subtitle: "ප්‍රශ්නයක් හෝ ප්‍රතිචාරයක් තිබේද? අපට අසන්න කැමතියි.",
+    contactInfo: [
+      { icon: Mail, label: "ඉ-තැපෑල", value: "support@emosense.app", href: "mailto:support@emosense.app" },
+      { icon: Phone, label: "දුරකථනය", value: "+94 11 234 5678", href: "tel:+94112345678" },
+      { icon: MapPin, label: "ලිපිනය", value: "Student Wellness Center, University Campus, Colombo", href: "#" },
+      { icon: Clock, label: "වේලාවන්", value: "සඳුදා-සිකුරාදා: උදේ 8 - සවස 6", href: "#" },
+    ],
+    formTitle: "අපට පණිවිඩයක් යවන්න",
+    formDescription: "පහත පෝරමය පුරවා යවන්න, පැය 24ක් ඇතුළත අපි පිළිතුරු දෙන්නෙමු.",
+    sentTitle: "පණිවිඩය යවන ලදී!",
+    sentBody: "සම්බන්ධ වීම සඳහා ස්තූතියි. අපගේ කණ්ඩායම ඔබගේ පණිවිඩය සමාලෝචනය කර පැය 24ක් ඇතුළත පිළිතුරු දෙනු ඇත.",
+    sentButton: "තවත් පණිවිඩයක් යවන්න",
+    name: "සම්පූර්ණ නම",
+    namePlaceholder: "ඔබගේ නම",
+    email: "ඉ-තැපෑල",
+    emailPlaceholder: "you@university.edu",
+    subject: "මාතෘකාව",
+    subjectPlaceholder: "මාතෘකාවක් තෝරන්න",
+    message: "පණිවිඩය",
+    messagePlaceholder: "අපි ඔබට උදව් කරන්නේ කොහොමද?",
+    send: "පණිවිඩය යවන්න",
+    sending: "යවමින්...",
+    subjectOptions: [
+      { value: "general", label: "සාමාන්‍ය විමසීම" },
+      { value: "technical", label: "තාක්ෂණික සහාය" },
+      { value: "feedback", label: "ප්‍රතිචාර" },
+      { value: "counseling", label: "උපදේශන සේවා" },
+      { value: "privacy", label: "පුද්ගලිකත්වය පිළිබඳ කරුණු" },
+      { value: "other", label: "වෙනත්" },
+    ],
+  },
+}
+
 export default function ContactPage() {
+  const { language } = useLanguage()
+  const page = copy[language]
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
@@ -45,14 +139,14 @@ export default function ContactPage() {
         if (result.success) {
           setSubmitted(true)
           form.reset()
-          toast.success("Message sent successfully! We'll be in touch soon.")
+          toast.success(language === "en" ? "Message sent successfully! We'll be in touch soon." : "පණිවිඩය සාර්ථකව යවන ලදී! අපි ඉක්මනින්ම ඔබට සම්බන්ධ වන්නෙමු.")
         } else {
-          toast.error(result.error || "Failed to send message. Please try again.")
+          toast.error(result.error || (language === "en" ? "Failed to send message. Please try again." : "පණිවිඩය යැවීම අසාර්ථක විය. කරුණාකර නැවත උත්සාහ කරන්න."))
         }
       })
       .catch(() => {
         setLoading(false)
-        toast.error("An error occurred. Please try again later.")
+        toast.error(language === "en" ? "An error occurred. Please try again later." : "දෝෂයක් සිදුවිය. කරුණාකර පසුව නැවත උත්සාහ කරන්න.")
       })
   }
 
@@ -66,21 +160,15 @@ export default function ContactPage() {
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-            Contact Us
+            {page.title}
           </h1>
-          <p className="mt-1 text-muted-foreground">{"Have a question or feedback? We'd love to hear from you."}</p>
+          <p className="mt-1 text-muted-foreground">{page.subtitle}</p>
         </div>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        {/* Contact Info */}
         <div className="flex flex-col gap-4">
-          {[
-            { icon: Mail, label: "Email", value: "support@emosense.app", href: "mailto:support@emosense.app" },
-            { icon: Phone, label: "Phone", value: "+94 11 234 5678", href: "tel:+94112345678" },
-            { icon: MapPin, label: "Address", value: "Student Wellness Center, University Campus, Colombo", href: "#" },
-            { icon: Clock, label: "Hours", value: "Mon-Fri: 8 AM - 6 PM", href: "#" },
-          ].map((item) => (
+          {page.contactInfo.map((item) => (
             <Card key={item.label}>
               <CardContent className="flex items-center gap-3 p-4">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
@@ -99,11 +187,10 @@ export default function ContactPage() {
           ))}
         </div>
 
-        {/* Contact Form */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>Send us a Message</CardTitle>
-            <CardDescription>Fill out the form below and we will get back to you within 24 hours.</CardDescription>
+            <CardTitle>{page.formTitle}</CardTitle>
+            <CardDescription>{page.formDescription}</CardDescription>
           </CardHeader>
           <CardContent>
             {submitted ? (
@@ -111,12 +198,10 @@ export default function ContactPage() {
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-accent/30">
                   <CheckCircle className="h-8 w-8 text-foreground" />
                 </div>
-                <h3 className="text-xl font-semibold text-foreground">Message Sent!</h3>
-                <p className="text-center text-sm text-muted-foreground">
-                  Thank you for reaching out. Our team will review your message and respond within 24 hours.
-                </p>
+                <h3 className="text-xl font-semibold text-foreground">{page.sentTitle}</h3>
+                <p className="text-center text-sm text-muted-foreground">{page.sentBody}</p>
                 <Button onClick={() => { setSubmitted(false); form.reset() }} variant="outline">
-                  Send Another Message
+                  {page.sentButton}
                 </Button>
               </div>
             ) : (
@@ -128,9 +213,9 @@ export default function ContactPage() {
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
+                          <FormLabel>{page.name}</FormLabel>
                           <FormControl>
-                            <Input placeholder="Your name" {...field} />
+                            <Input placeholder={page.namePlaceholder} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -141,9 +226,9 @@ export default function ContactPage() {
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{page.email}</FormLabel>
                           <FormControl>
-                            <Input placeholder="you@university.edu" {...field} />
+                            <Input placeholder={page.emailPlaceholder} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -155,20 +240,19 @@ export default function ContactPage() {
                     name="subject"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Subject</FormLabel>
+                        <FormLabel>{page.subject}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a subject" />
+                              <SelectValue placeholder={page.subjectPlaceholder} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="general">General Inquiry</SelectItem>
-                            <SelectItem value="technical">Technical Support</SelectItem>
-                            <SelectItem value="feedback">Feedback</SelectItem>
-                            <SelectItem value="counseling">Counseling Services</SelectItem>
-                            <SelectItem value="privacy">Privacy Concerns</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
+                            {page.subjectOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -180,9 +264,9 @@ export default function ContactPage() {
                     name="message"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Message</FormLabel>
+                        <FormLabel>{page.message}</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="How can we help you?" rows={5} {...field} />
+                          <Textarea placeholder={page.messagePlaceholder} rows={5} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -190,7 +274,7 @@ export default function ContactPage() {
                   />
                   <Button type="submit" className="gap-2" disabled={loading}>
                     <Send className="h-4 w-4" />
-                    {loading ? "Sending..." : "Send Message"}
+                    {loading ? page.sending : page.send}
                   </Button>
                 </form>
               </Form>

@@ -1,28 +1,33 @@
+"use client"
+
 import Link from "next/link"
 import { BrandLogo } from "@/components/brand-logo"
 import { Heart } from "lucide-react"
+import { useLanguage } from "@/lib/language-context"
 
 const footerLinks = {
   Features: [
-    { href: "/emotion-detection", label: "Emotion Detection" },
-    { href: "/wellness", label: "Wellness Hub" },
-    { href: "/luma", label: "AI Therapist Luma" },
-    { href: "/mood-history", label: "Mood History" },
-    { href: "/booking", label: "Book a Counselor" },
+    { href: "/emotion-detection", labelKey: "nav.detect" },
+    { href: "/wellness", labelKey: "nav.wellness" },
+    { href: "/luma", labelKey: "nav.luma" },
+    { href: "/mood-history", labelKey: "nav.history" },
+    { href: "/booking", labelKey: "nav.book" },
   ],
   Support: [
-    { href: "/resources", label: "Resources" },
-    { href: "/contact", label: "Contact Us" },
-    { href: "/faq", label: "FAQ" },
-    { href: "/about", label: "About" },
+    { href: "/resources", labelKey: "nav.resources" },
+    { href: "/contact", labelKey: "nav.contact" },
+    { href: "/faq", labelKey: "nav.faq" },
+    { href: "/about", labelKey: "nav.about" },
   ],
   Legal: [
-    { href: "/privacy", label: "Privacy & Data" },
-    { href: "/about", label: "Terms of Use" },
+    { href: "/privacy", labelKey: "nav.privacy" },
+    { href: "/about", labelKey: "footer.terms" },
   ],
 }
 
 export function Footer() {
+  const { t } = useLanguage()
+
   return (
     <footer className="border-t border-border bg-muted/30">
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
@@ -35,13 +40,12 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              AI-powered emotion wellness platform designed for university students. 
-              Understand your emotions, get personalized support, and thrive.
+              {t('footer.description')}
             </p>
           </div>
           {Object.entries(footerLinks).map(([category, links]) => (
             <div key={category}>
-              <h3 className="mb-3 text-sm font-semibold text-foreground">{category}</h3>
+              <h3 className="mb-3 text-sm font-semibold text-foreground">{t(`footer.${category.toLowerCase()}`)}</h3>
               <ul className="flex flex-col gap-2">
                 {links.map((link) => (
                   <li key={link.href}>
@@ -49,7 +53,7 @@ export function Footer() {
                       href={link.href}
                       className="text-sm text-muted-foreground transition-colors hover:text-primary"
                     >
-                      {link.label}
+                      {t(link.labelKey)}
                     </Link>
                   </li>
                 ))}
@@ -59,11 +63,10 @@ export function Footer() {
         </div>
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 md:flex-row">
           <p className="text-xs text-muted-foreground">
-            EmoSense is not a replacement for professional mental health services. 
-            If you are in crisis, please contact emergency services.
+            {t('footer.disclaimer')}
           </p>
           <p className="flex items-center gap-1 text-xs text-muted-foreground">
-            Made with <Heart className="h-3 w-3 text-secondary" /> for student wellbeing
+            {t('footer.made_with')} <Heart className="h-3 w-3 text-secondary" /> {t('footer.for')}
           </p>
         </div>
       </div>

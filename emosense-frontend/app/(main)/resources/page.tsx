@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useLanguage } from "@/lib/language-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -99,6 +100,9 @@ const externalResources = [
 ]
 
 export default function ResourcesPage() {
+  const { language } = useLanguage()
+  const isSinhala = language === "si"
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
       <div className="mb-6 flex items-center gap-3">
@@ -109,9 +113,9 @@ export default function ResourcesPage() {
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-            Resources
+            {isSinhala ? "සම්පත්" : "Resources"}
           </h1>
-          <p className="mt-1 text-muted-foreground">Professional mental health support and resources</p>
+          <p className="mt-1 text-muted-foreground">{isSinhala ? "වෘත්තීය මානසික සෞඛ්‍ය සහාය සහ සම්පත්" : "Professional mental health support and resources"}</p>
         </div>
       </div>
 
@@ -120,9 +124,9 @@ export default function ResourcesPage() {
         <AlertTriangle className="h-5 w-5 shrink-0 text-destructive" />
         <div>
           <p className="text-sm font-medium text-foreground">
-            In immediate danger? Call <strong>1926</strong> or go to your nearest emergency room.
+            {isSinhala ? <>හදිසි අවදානමක් තිබේද? <strong>1926</strong> අමතන්න හෝ ඔබට ලඟම හදිසි වෛද්‍ය ඒකකයට යන්න.</> : <>In immediate danger? Call <strong>1926</strong> or go to your nearest emergency room.</>}
           </p>
-          <p className="text-xs text-muted-foreground">If you or someone you know is at risk, please seek help immediately.</p>
+          <p className="text-xs text-muted-foreground">{isSinhala ? "ඔබ හෝ ඔබ දන්නා කෙනෙකු අවදානමක නම්, කරුණාකර වහාම උදව් ලබාගන්න." : "If you or someone you know is at risk, please seek help immediately."}</p>
         </div>
         <a href="tel:1926" className="ml-auto shrink-0">
           <Button variant="destructive" size="sm" className="gap-1">
@@ -179,7 +183,7 @@ export default function ResourcesPage() {
       </div>
 
       {/* External Resources */}
-      <h2 className="mb-4 text-xl font-semibold text-foreground">External Resources</h2>
+      <h2 className="mb-4 text-xl font-semibold text-foreground">{isSinhala ? "බාහිර සම්පත්" : "External Resources"}</h2>
       <div className="grid gap-4 md:grid-cols-2">
         {externalResources.map((resource) => (
           <Card key={resource.name}>
@@ -206,16 +210,16 @@ export default function ResourcesPage() {
       {/* Bottom CTA */}
       <div className="mt-10 rounded-xl bg-primary/5 p-6 text-center">
         <Heart className="mx-auto mb-3 h-8 w-8 text-primary" />
-        <h3 className="text-lg font-semibold text-foreground">You Are Not Alone</h3>
+        <h3 className="text-lg font-semibold text-foreground">{isSinhala ? "ඔබ තනිව නෙවෙයි" : "You Are Not Alone"}</h3>
         <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-          Reaching out for help is a sign of strength, not weakness. Whether you need someone to talk to or professional support, we are here for you.
+          {isSinhala ? "උදව් ඉල්ලීම දුර්වලතාවයක් නොව ශක්තියක ලකුණකි. කතා කිරීමට කෙනෙකු අවශ්‍ය වුවත්, වෘත්තීය සහාය අවශ්‍ය වුවත්, අපි ඔබට සිටිනවා." : "Reaching out for help is a sign of strength, not weakness. Whether you need someone to talk to or professional support, we are here for you."}
         </p>
         <div className="mt-4 flex items-center justify-center gap-3">
           <Link href="/luma">
-            <Button className="gap-2">Talk to Luma AI</Button>
+            <Button className="gap-2">{isSinhala ? "Luma AI සමඟ කතා කරන්න" : "Talk to Luma AI"}</Button>
           </Link>
           <Link href="/booking">
-            <Button variant="outline" className="gap-2">Book a Counselor</Button>
+            <Button variant="outline" className="gap-2">{isSinhala ? "උපදේශකයෙකු වෙන්කරන්න" : "Book a Counselor"}</Button>
           </Link>
         </div>
       </div>

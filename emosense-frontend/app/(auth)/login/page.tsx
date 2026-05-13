@@ -29,12 +29,12 @@ export default function LoginPage() {
       // login() will automatically reject admin credentials
       await login(username, password)
 
-      toast.success("Welcome back! Redirecting to dashboard...")
+      toast.success(t('auth.welcome_back'))
       setTimeout(() => {
         router.push('/dashboard')
       }, 500)
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Login failed")
+      toast.error(error instanceof Error ? error.message : t('auth.login_failed'))
       setUsername("")
       setPassword("")
     } finally {
@@ -73,7 +73,7 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">{t('auth.password')}</Label>
                   <Link href="/forgot-password" className="text-xs text-primary hover:underline">
-                    Forgot password?
+                    {t('auth.forgot_password')}
                   </Link>
                 </div>
                 <div className="relative">
@@ -95,7 +95,7 @@ export default function LoginPage() {
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Signing in..." : t('auth.signin')}
+                {loading ? t('auth.signing_in') : t('auth.signin')}
               </Button>
             </form>
             <p className="mt-4 text-center text-sm text-muted-foreground">
@@ -104,9 +104,9 @@ export default function LoginPage() {
             </p>
             <div className="mt-6 border-t pt-4">
               <p className="text-center text-xs text-muted-foreground">
-                Are you an admin?{" "}
+                {t('auth.admin_prompt')} {" "}
                 <Link href="/admin-login" className="font-medium text-red-600 hover:underline hover:text-red-700">
-                  Sign in to admin panel
+                  {t('auth.admin_link')}
                 </Link>
               </p>
             </div>

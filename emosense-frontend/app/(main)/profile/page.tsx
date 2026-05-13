@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useLanguage } from "@/lib/language-context"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -55,6 +56,8 @@ const recentActivity = [
 ]
 
 export default function ProfilePage() {
+  const { language } = useLanguage()
+  const isSinhala = language === "si"
   const [editing, setEditing] = useState(false)
   const [profile, setProfile] = useState({
     name: "Alex Perera",
@@ -68,7 +71,7 @@ export default function ProfilePage() {
 
   const handleSave = () => {
     setEditing(false)
-    toast.success("Profile updated successfully!")
+    toast.success(isSinhala ? "පැතිකඩය සාර්ථකව යාවත්කාලීන විය!" : "Profile updated successfully!")
   }
 
   return (
@@ -82,9 +85,9 @@ export default function ProfilePage() {
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-              My Profile
+              {isSinhala ? "මගේ පැතිකඩ" : "My Profile"}
             </h1>
-            <p className="mt-1 text-muted-foreground">Manage your account and view your progress</p>
+            <p className="mt-1 text-muted-foreground">{isSinhala ? "ඔබගේ ගිණුම කළමනාකරණය කර ඔබගේ ප්‍රගතිය බලන්න" : "Manage your account and view your progress"}</p>
           </div>
         </div>
         <div className="flex gap-2">

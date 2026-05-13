@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useLanguage } from "@/lib/language-context"
 import {
   ArrowLeft,
   Heart,
@@ -121,6 +122,8 @@ const breathingExercises = [
 ]
 
 function BreathingTimer() {
+  const { language } = useLanguage()
+  const isSinhala = language === "si"
   const [selectedExercise, setSelectedExercise] = useState(0)
   const [isActive, setIsActive] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
@@ -185,7 +188,9 @@ function BreathingTimer() {
                 : "border-border bg-muted/50 text-muted-foreground hover:bg-muted"
             }`}
           >
-            {ex.name}
+            {isSinhala
+              ? ({ "Box Breathing": "බොක්ස් හුස්ම", "4-7-8 Technique": "4-7-8 ක්‍රමය", "Deep Belly": "ගැඹුරු උදර හුස්ම" } as Record<string, string>)[ex.name] ?? ex.name
+              : ex.name}
           </button>
         ))}
       </div>
@@ -200,12 +205,12 @@ function BreathingTimer() {
             <>
               <span className="text-3xl font-bold text-primary">{countdown}</span>
               <span className="text-sm font-medium text-foreground">{step?.label}</span>
-              <span className="text-xs text-muted-foreground">Cycle {cycles + 1}</span>
+              <span className="text-xs text-muted-foreground">{isSinhala ? "චක්‍රය" : "Cycle"} {cycles + 1}</span>
             </>
           ) : (
             <>
               <Wind className="h-8 w-8 text-primary" />
-              <span className="text-sm text-muted-foreground">Press start</span>
+              <span className="text-sm text-muted-foreground">{isSinhala ? "ආරම්භ කිරීමට ඔබන්න" : "Press start"}</span>
             </>
           )}
         </div>
@@ -213,11 +218,11 @@ function BreathingTimer() {
 
       <div className="flex gap-2">
         <Button size="sm" onClick={isActive ? () => { setIsActive(false); if (intervalRef.current) clearInterval(intervalRef.current) } : start} className="gap-1">
-          {isActive ? <><Pause className="h-3 w-3" /> Pause</> : <><Play className="h-3 w-3" /> Start</>}
+          {isActive ? <><Pause className="h-3 w-3" /> {isSinhala ? "විරාමය" : "Pause"}</> : <><Play className="h-3 w-3" /> {isSinhala ? "ආරම්භ කරන්න" : "Start"}</>}
         </Button>
         {(isActive || cycles > 0) && (
           <Button size="sm" variant="outline" onClick={stop} className="gap-1">
-            <RotateCcw className="h-3 w-3" /> Reset
+            <RotateCcw className="h-3 w-3" /> {isSinhala ? "නැවත සකසන්න" : "Reset"}
           </Button>
         )}
       </div>
@@ -226,6 +231,8 @@ function BreathingTimer() {
 }
 
 export default function WellnessPage() {
+  const { language } = useLanguage()
+  const isSinhala = language === "si"
   const [dailyAffirmation, setDailyAffirmation] = useState("")
 
   useEffect(() => {

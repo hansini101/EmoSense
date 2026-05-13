@@ -28,23 +28,23 @@ export default function RegisterPage() {
     e.preventDefault()
     
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match")
+      toast.error(t('auth.password_mismatch'))
       return
     }
 
     if (password.length < 6) {
-      toast.error("Password must be at least 6 characters")
+      toast.error(t('auth.password_short'))
       return
     }
 
     setLoading(true)
     register(username, password, firstName)
       .then(() => {
-        toast.success("Account created! Welcome to EmoSense.")
+        toast.success(t('auth.account_created'))
         router.push("/dashboard")
       })
       .catch((error) => {
-        toast.error(error instanceof Error ? error.message : "Registration failed")
+        toast.error(error instanceof Error ? error.message : t('auth.registration_failed'))
       })
       .finally(() => {
         setLoading(false)
@@ -63,7 +63,7 @@ export default function RegisterPage() {
         <Card>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">{t('auth.register')}</CardTitle>
-            <CardDescription>Start your emotional wellness journey today</CardDescription>
+            <CardDescription>{t('auth.register_subheading')}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -122,7 +122,7 @@ export default function RegisterPage() {
                 </div>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Creating account..." : t('auth.register')}
+                {loading ? t('auth.creating_account') : t('auth.register')}
               </Button>
             </form>
             <p className="mt-4 text-center text-sm text-muted-foreground">

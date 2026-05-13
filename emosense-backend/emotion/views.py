@@ -10,6 +10,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.utils import timezone
 import numpy as np
+from django.conf import settings
 
 from .utils import preprocess_image, is_valid_image_content
 from .model_loader import load_model
@@ -21,7 +22,7 @@ from .personalization import (
 )
 
 
-EMOTION_LABELS = ["angry", "disgusted", "fearful", "happy", "sad", "surprised", "neutral"]
+EMOTION_LABELS = settings.EMOTION_LABELS
 
 
 # ========================

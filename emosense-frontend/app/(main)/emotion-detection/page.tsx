@@ -29,6 +29,7 @@ import {
   ThumbsDown,
 } from "lucide-react"
 import { toast } from "sonner"
+import { useLanguage } from "@/lib/language-context"
 
 type EmotionResult = {
   emotion: string
@@ -163,6 +164,8 @@ const emotionResults: Record<string, EmotionResult> = {
 }
 
 export default function EmotionDetectionPage() {
+  const { language } = useLanguage()
+  const isSinhala = language === "si"
   const WebcamComponent = Webcam as unknown as ComponentType<any>
   const [mode, setMode] = useState<"webcam" | "upload">("webcam")
   const [cameraActive, setCameraActive] = useState(false)
@@ -180,7 +183,7 @@ export default function EmotionDetectionPage() {
     setCameraError(null)
 
     if (!window.isSecureContext) {
-      const message = "Camera requires a secure context. Use localhost or HTTPS."
+      const message = isSinhala ? "කැමරාවට secure context එකක් අවශ්‍යයි. localhost හෝ HTTPS භාවිතා කරන්න." : "Camera requires a secure context. Use localhost or HTTPS."
       console.error("Camera error:", message)
       setCameraError(message)
       toast.error(message)
@@ -188,7 +191,7 @@ export default function EmotionDetectionPage() {
     }
 
     if (!navigator.mediaDevices?.getUserMedia) {
-      const message = "Camera is not supported in this browser."
+      const message = isSinhala ? "මෙම browser එකේ කැමරාව සහය නොදක්වයි." : "Camera is not supported in this browser."
       console.error("Camera error:", message)
       setCameraError(message)
       toast.error(message)
@@ -209,13 +212,13 @@ export default function EmotionDetectionPage() {
   const handleUserMediaError = useCallback((err: string | DOMException) => {
     console.error("Camera error:", err)
     const errorName = typeof err === "string" ? err : err?.name
-    let message = "Unable to access camera. Please check permissions and try again."
+      let message = isSinhala ? "කැමරාවට ප්‍රවේශ විය නොහැකි විය. අවසර පරීක්ෂා කර නැවත උත්සාහ කරන්න." : "Unable to access camera. Please check permissions and try again."
     if (errorName === "NotAllowedError") {
-      message = "Camera permission denied. Allow camera access for localhost and refresh."
+      message = isSinhala ? "කැමරා අවසර ප්‍රතික්ෂේප විය. localhost සඳහා camera access දෙන්න සහ refresh කරන්න." : "Camera permission denied. Allow camera access for localhost and refresh."
     } else if (errorName === "NotReadableError") {
-      message = "Camera is busy. Close Zoom/Teams/Camera app and try again."
+      message = isSinhala ? "කැමරාව තවදුරටත් භාවිතයේ ඇත. Zoom/Teams/Camera app වසා නැවත උත්සාහ කරන්න." : "Camera is busy. Close Zoom/Teams/Camera app and try again."
     } else if (errorName === "NotFoundError") {
-      message = "No camera detected on this device."
+      message = isSinhala ? "මෙම උපාංගයේ කැමරාවක් හමු නොවීය." : "No camera detected on this device."
     }
     setCameraError(message)
     setCameraActive(false)
@@ -248,7 +251,7 @@ export default function EmotionDetectionPage() {
   const handleCropComplete = (croppedImage: string) => {
     setUploadedImage(croppedImage)
     setShowCropper(false)
-    toast.success("Image cropped successfully!")
+    toast.success(isSinhala ? "රූපය සාර්ථකව crop කරන ලදී!" : "Image cropped successfully!")
   }
 
   const analyzeEmotion = () => {
@@ -259,7 +262,7 @@ export default function EmotionDetectionPage() {
     setTimeout(() => {
       setResult(emotionResults[randomEmotion])
       setAnalyzing(false)
-      toast.success("Emotion analysis complete!")
+      toast.success(isSinhala ? "හැඟීම් විශ්ලේෂණය අවසන්!" : "Emotion analysis complete!")
     }, 2500)
   }
 

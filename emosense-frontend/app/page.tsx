@@ -1,13 +1,18 @@
 "use client"
 
+"use client"
+
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { Camera, MessageCircle, Sparkles } from "lucide-react"
+import { useLanguage } from "@/lib/language-context"
 
 export default function HomePage() {
+  const { t } = useLanguage()
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
@@ -26,7 +31,7 @@ export default function HomePage() {
               >
                 <Sparkles className="h-4 w-4 text-primary" />
                 <span className="text-sm font-medium text-muted-foreground">
-                  AI-Powered Emotional Wellness
+                  {t('home.badge')}
                 </span>
               </motion.div>
 
@@ -38,7 +43,7 @@ export default function HomePage() {
                 className="text-balance text-5xl font-bold tracking-tight text-foreground md:text-6xl"
                 style={{ fontFamily: 'var(--font-heading)' }}
               >
-                Understand Your Emotions, Transform Your Wellbeing
+                {t('home.title')}
               </motion.h1>
 
               {/* Description */}
@@ -48,8 +53,7 @@ export default function HomePage() {
                 transition={{ duration: 0.6, delay: 0.2 }}
                 className="mt-6 text-pretty text-lg leading-relaxed text-muted-foreground md:text-xl"
               >
-                EmoSense uses AI to detect your emotions and connects you with personalized wellness tools,
-                an AI therapist named Luma, and campus mental health resources — all in one place.
+                {t('home.description')}
               </motion.p>
 
               {/* CTAs */}
@@ -62,13 +66,13 @@ export default function HomePage() {
                 <Link href="/emotion-detection">
                   <Button size="lg" className="gap-2 px-8">
                     <Camera className="h-5 w-5" />
-                    Analyze My Emotion
+                    {t('home.analyze')}
                   </Button>
                 </Link>
                 <Link href="/luma">
                   <Button variant="outline" size="lg" className="gap-2 px-8">
                     <MessageCircle className="h-5 w-5" />
-                    Talk to Luma
+                    {t('home.luma')}
                   </Button>
                 </Link>
               </motion.div>

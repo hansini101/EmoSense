@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useLanguage } from "@/lib/language-context"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Calendar } from "@/components/ui/calendar"
@@ -72,6 +73,8 @@ const emotionSummary = [
 ]
 
 export default function MoodHistoryPage() {
+  const { language } = useLanguage()
+  const isSinhala = language === "si"
   const [date, setDate] = useState<Date | undefined>(new Date())
 
   return (
@@ -84,9 +87,9 @@ export default function MoodHistoryPage() {
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: 'var(--font-heading)' }}>
-            Mood History
+            {isSinhala ? "මනෝභාව ඉතිහාසය" : "Mood History"}
           </h1>
-          <p className="mt-1 text-muted-foreground">Track and understand your emotional patterns over time</p>
+          <p className="mt-1 text-muted-foreground">{isSinhala ? "කාලයත් සමඟ ඔබගේ චිත්තවේගීය රටා නිරීක්ෂණය කර තේරුම් ගන්න" : "Track and understand your emotional patterns over time"}</p>
         </div>
       </div>
 
@@ -96,12 +99,12 @@ export default function MoodHistoryPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">Most Common Mood</p>
+                <p className="text-sm font-medium text-muted-foreground">{isSinhala ? "වඩාත් පොදු මනෝභාවය" : "Most Common Mood"}</p>
                 <div className="flex items-center gap-3">
                   <Smile className="h-6 w-6 text-yellow-500" />
                   <div>
                     <p className="text-2xl font-bold text-foreground">Happy</p>
-                    <p className="text-xs text-muted-foreground">52% of sessions</p>
+                    <p className="text-xs text-muted-foreground">{isSinhala ? "සැසිවල 52%" : "52% of sessions"}</p>
                   </div>
                 </div>
               </div>
@@ -113,12 +116,12 @@ export default function MoodHistoryPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">Weekly Improvement</p>
+                <p className="text-sm font-medium text-muted-foreground">{isSinhala ? "සතිපතා දියුණුව" : "Weekly Improvement"}</p>
                 <div className="flex items-center gap-3">
                   <TrendingUp className="h-6 w-6 text-green-500" />
                   <div>
                     <p className="text-2xl font-bold text-foreground">+15%</p>
-                    <p className="text-xs text-muted-foreground">Compared to last week</p>
+                    <p className="text-xs text-muted-foreground">{isSinhala ? "පසුගිය සතියට සාපේක්ෂව" : "Compared to last week"}</p>
                   </div>
                 </div>
               </div>
@@ -130,7 +133,7 @@ export default function MoodHistoryPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="space-y-2">
-                <p className="text-sm font-medium text-muted-foreground">Wellness Score</p>
+                <p className="text-sm font-medium text-muted-foreground">{isSinhala ? "සුවතා ලකුණු" : "Wellness Score"}</p>
                 <div className="space-y-2">
                   <p className="text-2xl font-bold text-foreground">78/100</p>
                   <Progress value={78} className="h-2" />
@@ -147,9 +150,9 @@ export default function MoodHistoryPage() {
           <div className="flex gap-3">
             <Clock className="h-5 w-5 shrink-0 text-accent" />
             <div>
-              <p className="font-medium text-foreground">Time-Based Pattern</p>
+              <p className="font-medium text-foreground">{isSinhala ? "කාලය මත පදනම් වූ රටාව" : "Time-Based Pattern"}</p>
               <p className="text-sm text-muted-foreground">
-                You tend to feel more stressed during evening hours (5 PM - 8 PM). Try scheduling relaxation activities during this time, like breathing exercises or outdoor walks.
+                {isSinhala ? "සවස පැයවල (5 PM - 8 PM) ඔබට වැඩියෙන් පීඩනය දැනේ. මේ කාලයේ හුස්ම ව්‍යායාම හෝ එළිමහන් ඇවිදිම් වැනි ලිහිල් කිරීමේ ක්‍රියාකාරකම් සැලසුම් කරන්න." : "You tend to feel more stressed during evening hours (5 PM - 8 PM). Try scheduling relaxation activities during this time, like breathing exercises or outdoor walks."}
               </p>
             </div>
           </div>
@@ -159,13 +162,13 @@ export default function MoodHistoryPage() {
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList>
           <TabsTrigger value="overview" className="gap-2">
-            <BarChart3 className="h-4 w-4" /> Overview
+            <BarChart3 className="h-4 w-4" /> {isSinhala ? "සාරාංශය" : "Overview"}
           </TabsTrigger>
           <TabsTrigger value="calendar" className="gap-2">
-            <CalendarIcon className="h-4 w-4" /> Calendar
+            <CalendarIcon className="h-4 w-4" /> {isSinhala ? "දින දර්ශනය" : "Calendar"}
           </TabsTrigger>
           <TabsTrigger value="sessions" className="gap-2">
-            <Clock className="h-4 w-4" /> All Sessions
+            <Clock className="h-4 w-4" /> {isSinhala ? "සියලු සැසි" : "All Sessions"}
           </TabsTrigger>
         </TabsList>
 
@@ -175,9 +178,9 @@ export default function MoodHistoryPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-primary" /> Monthly Emotions
+                  <BarChart3 className="h-5 w-5 text-primary" /> {isSinhala ? "මාසික හැඟීම්" : "Monthly Emotions"}
                 </CardTitle>
-                <CardDescription>Emotion distribution by week</CardDescription>
+                <CardDescription>{isSinhala ? "සතිය අනුව හැඟීම් ව්‍යාප්තිය" : "Emotion distribution by week"}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-64">
@@ -201,9 +204,9 @@ export default function MoodHistoryPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-primary" /> Wellness Score Trend
+                  <TrendingUp className="h-5 w-5 text-primary" /> {isSinhala ? "සුවතා ලකුණු ප්‍රවණතාව" : "Wellness Score Trend"}
                 </CardTitle>
-                <CardDescription>Your overall emotional wellness over time</CardDescription>
+                <CardDescription>{isSinhala ? "කාලයත් සමඟ ඔබගේ සමස්ත චිත්තවේගීය සුවතාව" : "Your overall emotional wellness over time"}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="h-64">
@@ -224,8 +227,8 @@ export default function MoodHistoryPage() {
           {/* Emotion Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>Emotion Summary</CardTitle>
-              <CardDescription>All-time breakdown of your detected emotions</CardDescription>
+              <CardTitle>{isSinhala ? "හැඟීම් සාරාංශය" : "Emotion Summary"}</CardTitle>
+              <CardDescription>{isSinhala ? "ඔබගේ හඳුනාගත් හැඟීම්වල සමස්ත ව්‍යාප්තිය" : "All-time breakdown of your detected emotions"}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -250,7 +253,7 @@ export default function MoodHistoryPage() {
           <div className="grid gap-6 lg:grid-cols-3">
             <Card className="lg:col-span-1">
               <CardHeader>
-                <CardTitle className="text-base">Select Date</CardTitle>
+                <CardTitle className="text-base">{isSinhala ? "දිනය තෝරන්න" : "Select Date"}</CardTitle>
               </CardHeader>
               <CardContent>
                 <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md" />
@@ -258,7 +261,7 @@ export default function MoodHistoryPage() {
             </Card>
             <Card className="lg:col-span-2">
               <CardHeader>
-                <CardTitle>Sessions for {date?.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</CardTitle>
+                <CardTitle>{isSinhala ? "සැසි" : "Sessions"} {date?.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-col gap-3">
@@ -285,8 +288,8 @@ export default function MoodHistoryPage() {
         <TabsContent value="sessions">
           <Card>
             <CardHeader>
-              <CardTitle>All Detection Sessions</CardTitle>
-              <CardDescription>Complete log of your emotion detection history</CardDescription>
+              <CardTitle>{isSinhala ? "සියලු හඳුනාගැනීමේ සැසි" : "All Detection Sessions"}</CardTitle>
+              <CardDescription>{isSinhala ? "ඔබගේ හැඟීම් හඳුනාගැනීමේ ඉතිහාසයේ සම්පූර්ණ ලොගය" : "Complete log of your emotion detection history"}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-3">
