@@ -132,6 +132,6 @@ REST_FRAMEWORK = {
 }
 
 # ML Model Configuration
-ML_MODEL_PATH = os.path.join(BASE_DIR, 'emotion', 'ml_model', 'best_model_final.keras')
+ML_MODEL_PATH = os.path.join(BASE_DIR, 'emotion', 'ml_model', 'emotion_model.keras')
 # Keep the canonical order in sync with the training notebook.
 EMOTION_LABELS = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']

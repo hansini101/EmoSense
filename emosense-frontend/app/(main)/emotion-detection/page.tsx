@@ -29,6 +29,7 @@ import {
   ThumbsDown,
 } from "lucide-react"
 import { toast } from "sonner"
+import { API_BASE_URL } from "@/lib/api-config"
 import { useLanguage } from "@/lib/language-context"
 
 type EmotionResult = {
@@ -254,17 +255,85 @@ export default function EmotionDetectionPage() {
     toast.success(isSinhala ? "රූපය සාර්ථකව crop කරන ලදී!" : "Image cropped successfully!")
   }
 
-  const analyzeEmotion = () => {
+  const dataURLtoBlob = (dataurl: string) => {
+    const arr = dataurl.split(',')
+    const mime = arr[0].match(/:(.*?);/)?.[1] || 'image/jpeg'
+    const bstr = atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n)
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new Blob([u8arr], { type: mime })
+  }
+
+  const analyzeEmotion = useCallback(async () => {
     setAnalyzing(true)
     setResult(null)
-    const emotions = Object.keys(emotionResults)
-    const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)]
-    setTimeout(() => {
-      setResult(emotionResults[randomEmotion])
+
+    try {
+      // Get image data either from uploadedImage state or current webcam frame
+      let imageData = uploadedImage
+      if (!imageData && webcamRef.current) {
+        imageData = webcamRef.current.getScreenshot()
+      }
+
+      if (!imageData) {
+        const msg = isSinhala ? 'නිරීක්ෂණ සඳහා රූපයක් හෝ කැමරා ගේ_capture එකක් අත්‍යවශ්‍යයි.' : 'No image available to analyze.'
+        toast.error(msg)
+        setAnalyzing(false)
+        return
+      }
+
+      const blob = dataURLtoBlob(imageData)
+      const fd = new FormData()
+      fd.append('image', blob, 'capture.jpg')
+
+      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null
+      const headers: Record<string, string> = {}
+      if (token) headers['Authorization'] = `Token ${token}`
+
+      const resp = await fetch(`${API_BASE_URL}/api/predict/`, {
+        method: 'POST',
+        headers: Object.keys(headers).length ? headers : undefined,
+        body: fd,
+      })
+
+      const json = await resp.json()
+      if (!resp.ok) {
+        const err = json?.error || 'Prediction failed'
+        toast.error(err)
+        setAnalyzing(false)
+        return
+      }
+
+      // backend labels: ['angry','disgust','fear','happy','neutral','sad','surprise']
+      const mapping: Record<string, string> = {
+        angry: 'angry',
+        disgust: 'disgusted',
+        fear: 'fearful',
+        happy: 'happy',
+        neutral: 'neutral',
+        sad: 'sad',
+        surprise: 'surprised',
+      }
+
+      const rawEmotion = (json.emotion || '').toString().toLowerCase()
+      const frontendKey = mapping[rawEmotion] || 'neutral'
+
+      const template = emotionResults[frontendKey] || emotionResults['neutral']
+      const confidencePct = typeof json.confidence === 'number' ? Math.round(json.confidence * 100) : template.confidence
+
+      setResult({ ...template, confidence: confidencePct, emotion: (json.emotion || template.emotion) })
+      toast.success(isSinhala ? 'හරි, හැඟීම ආපසු ලැබී ඇත!' : 'Emotion analysis complete!')
+
+    } catch (e: any) {
+      console.error('Analyze error', e)
+      toast.error(isSinhala ? 'හැඟීම් විශ්ලේෂණය අපොහොසත් විය' : 'Emotion analysis failed')
+    } finally {
       setAnalyzing(false)
-      toast.success(isSinhala ? "හැඟීම් විශ්ලේෂණය අවසන්!" : "Emotion analysis complete!")
-    }, 2500)
-  }
+    }
+  }, [uploadedImage, webcamRef, isSinhala])
 
   const resetAll = () => {
     setResult(null)
