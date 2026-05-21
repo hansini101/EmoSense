@@ -7,6 +7,16 @@ import types
 import numpy as np
 from django.conf import settings
 
+import tensorflow as tf
+
+# Register BEFORE any model loading
+try:
+    from tensorflow.keras.layers import Rescaling
+    tf.keras.utils.get_custom_objects()['Rescaling'] = Rescaling
+    print("✓ Rescaling registered")
+except Exception as e:
+    print(f"Rescaling register failed: {e}")
+
 # Global model instance
 _model = None
 
@@ -107,17 +117,13 @@ def _register_keras_compatibility_shims():
 
 
 def load_model():
-    """Load the emotion detection model"""
     global _model
     
     if _model is not None:
         return _model
     
     try:
-        # Use the correct import path for TensorFlow 2.13.0
-        custom_objects = _register_keras_compatibility_shims() or {}
-        from tensorflow.keras import models
-        
+        import keras
         model_path = settings.ML_MODEL_PATH
         
         if not os.path.exists(model_path):
@@ -126,7 +132,8 @@ def load_model():
                 "Please download the model using: python download_model.py"
             )
         
-        _model = models.load_model(model_path, custom_objects=custom_objects)
+        # Use keras.saving.load_model for Keras 3 .keras format
+        _model = keras.saving.load_model(model_path)
         print(f"✓ Model loaded successfully from {model_path}")
         return _model
         
@@ -136,8 +143,7 @@ def load_model():
         )
     except Exception as e:
         raise RuntimeError(f"Failed to load model: {str(e)}")
-
-
+    
 def predict_emotion(preprocessed_image):
     """
     Predict emotion from preprocessed image
