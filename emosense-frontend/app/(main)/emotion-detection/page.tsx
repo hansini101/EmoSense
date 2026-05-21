@@ -27,6 +27,7 @@ import {
   Sparkles,
   ThumbsUp,
   ThumbsDown,
+  Crop,
 } from "lucide-react"
 import { toast } from "sonner"
 import { API_BASE_URL } from "@/lib/api-config"
@@ -243,9 +244,15 @@ export default function EmotionDetectionPage() {
       const reader = new FileReader()
       reader.onload = (event) => {
         setUploadedImage(event.target?.result as string)
-        setShowCropper(true)
+        setShowCropper(false)
       }
       reader.readAsDataURL(file)
+    }
+  }
+
+  const openCropper = () => {
+    if (uploadedImage) {
+      setShowCropper(true)
     }
   }
 
@@ -446,7 +453,6 @@ export default function EmotionDetectionPage() {
                         onCropComplete={handleCropComplete}
                         onCancel={() => {
                           setShowCropper(false)
-                          setUploadedImage(null)
                         }}
                       />
                     </div>
@@ -483,6 +489,15 @@ export default function EmotionDetectionPage() {
                         />
                       </div>
                       <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button
+                          variant="outline"
+                          onClick={openCropper}
+                          className="flex-1 gap-2"
+                          disabled={!uploadedImage || analyzing}
+                        >
+                          <Crop className="h-4 w-4" />
+                          Crop Image
+                        </Button>
                         <Button
                           onClick={() => analyzeEmotion()}
                           className="flex-1 gap-2"

@@ -6,7 +6,6 @@ import cv2
 import numpy as np
 from PIL import Image
 from tensorflow.keras.applications.efficientnet import preprocess_input
-
 # ========================
 # IMAGE VALIDATION CONSTANTS
 # ========================
@@ -35,35 +34,15 @@ def is_valid_image_content(file):
 
 
 def preprocess_image(image_file):
-    """
-    Preprocess image for EfficientNetB0 emotion detection model.
-
-    Pipeline:
-        1. Decode image with OpenCV
-        2. Detect face with Haar Cascade (fallback to full image)
-        3. Resize to 224x224
-        4. Convert BGR → RGB
-        5. Apply EfficientNetB0 preprocess_input (not /255.0)
-        6. Return shape (1, 224, 224, 3)
-
-    Args:
-        image_file: Django UploadedFile object
-
-    Returns:
-        numpy array of shape (1, 224, 224, 3)
-    """
     try:
-        # Read from beginning
         image_file.seek(0)
         image_data = image_file.read()
         nparr = np.frombuffer(image_data, np.uint8)
 
-        # Decode as colour image
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         if img is None:
             raise ValueError("Failed to decode image")
 
-        # ── Face detection ────────────────────────────────────────────────────
         import os
         cascade_path = os.path.join(
             os.path.dirname(__file__),
@@ -71,30 +50,25 @@ def preprocess_image(image_file):
         )
         face_cascade = cv2.CascadeClassifier(cascade_path)
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        faces = face_cascade.detectMultiScale(img_gray, 1.3, 5)
+        faces = face_cascade.detectMultiScale(img_gray, 1.1, 3, minSize=(30, 30))
+        print(f"DEBUG: Faces detected: {len(faces)}")
 
         if len(faces) == 0:
             print("WARNING: No face detected, using full image")
-            face_roi = img  # Keep as colour (BGR)
+            face_roi = img
         else:
             x, y, w, h = max(faces, key=lambda f: f[2] * f[3])
-            face_roi = img[y:y + h, x:x + w]  # Crop colour image, NOT grayscale
+            face_roi = img[y:y + h, x:x + w]
 
-        # ── Resize to 224x224 ─────────────────────────────────────────────────
         img_resized = cv2.resize(face_roi, (IMG_SIZE, IMG_SIZE))
-
-        # ── BGR → RGB ─────────────────────────────────────────────────────────
         img_rgb = cv2.cvtColor(img_resized, cv2.COLOR_BGR2RGB)
 
-        # ── EfficientNetB0 preprocessing ──────────────────────────────────────
-        # preprocess_input handles its own scaling — do NOT divide by 255.0
+        # ✅ CORRECT — matches training: preprocessing_function=preprocess_input
         img_array = img_rgb.astype(np.float32)
         img_preprocessed = preprocess_input(img_array)
 
-        # ── Add batch dimension → (1, 224, 224, 3) ───────────────────────────
         img_final = np.expand_dims(img_preprocessed, axis=0)
-
-        print(f"DEBUG: Preprocessed image shape: {img_final.shape}")
+        print(f"DEBUG shape: {img_final.shape}, min: {img_final.min():.2f}, max: {img_final.max():.2f}")
         return img_final
 
     except Exception as e:

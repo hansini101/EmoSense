@@ -134,4 +134,6 @@ REST_FRAMEWORK = {
 # ML Model Configuration
 ML_MODEL_PATH = os.path.join(BASE_DIR, 'emotion', 'ml_model', 'emotion_model.keras')
 # Keep the canonical order in sync with the training notebook.
-EMOTION_LABELS = ['angry', 'disgust', 'fear', 'happy', 'neutral', 'sad', 'surprise']
+# RAF-DB folders are named 1–7, sorted alphabetically by Keras → indices 0–6
+# 1=surprise, 2=fear, 3=disgust, 4=happy, 5=sad, 6=angry, 7=neutral
+EMOTION_LABELS = ['surprise', 'fear', 'disgust', 'happy', 'sad', 'angry', 'neutral']

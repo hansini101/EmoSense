@@ -28,42 +28,44 @@ type Message = {
 const lumaCopy = {
   en: {
     initial:
-      "Hi there! I'm **Luma**, your AI wellness companion. I'm here to listen, offer support, and suggest personalized wellness strategies.\n\nHow are you feeling today? You can tell me anything, or try one of the quick prompts below.",
-    supportLine: "Luma is an AI companion, not a replacement for professional help.",
+      "Hi, I'm **Luma**. I'm here like a calm, supportive friend who listens and helps with feelings, stress, anxiety, sadness, and other mental-health concerns.\n\nTell me what's on your mind, and I’ll stay focused on your emotional wellbeing.",
+    supportLine: "Luma supports emotional wellbeing and is not a replacement for professional mental health care.",
     supportLink: "Find professional support",
     crisisTitle: "You are not alone.",
     crisisBody:
       "If you are in crisis or experiencing suicidal thoughts, please reach out immediately. Sri Lanka Sumithrayo Hotline:",
     crisisLink: "View all crisis resources",
     responses: {
-      stress: "I hear you, and it's completely okay to feel stressed. University life can be overwhelming sometimes. Let's try something together:\n\n**Quick Grounding Exercise:**\n1. Take a slow deep breath in for 4 seconds\n2. Hold for 4 seconds\n3. Exhale slowly for 6 seconds\n4. Repeat 3 times\n\nStress is your body's way of responding to demands. Would you like to talk about what's specifically causing your stress? Sometimes just naming it can help reduce its power over you.",
-      relax: "Let's create a moment of calm together. Here's a progressive muscle relaxation technique:\n\n**Body Scan Relaxation:**\n- Start by tensing your toes for 5 seconds, then release\n- Move to your calves, thighs, stomach, hands, arms, shoulders, and face\n- With each release, feel the tension melting away\n\nYou deserve this moment of peace. Remember, relaxation is not laziness — it's self-care. Would you like me to guide you through a longer meditation?",
-      motivation: "I believe in you, and here's why you should too:\n\n**Remember:**\n- You've overcome challenges before, and you will again\n- Progress isn't always linear — small steps matter\n- You're here seeking help, which shows incredible strength\n\n**Try this:** Write down 3 things you've accomplished this week, no matter how small. Acknowledging your wins builds momentum.\n\nWhat's one small goal you'd like to achieve today? Let's make it happen together.",
-      breathing: "Let's do a calming breathing exercise together:\n\n**4-7-8 Breathing Technique:**\n1. Breathe IN through your nose for **4 seconds**\n2. HOLD your breath for **7 seconds**\n3. Breathe OUT through your mouth for **8 seconds**\n4. Repeat this cycle **4 times**\n\nThis technique activates your parasympathetic nervous system, helping your body shift from \"fight or flight\" to \"rest and digest.\" It's especially helpful before bed or during anxious moments.\n\nHow do you feel after trying it?",
-      repeated_sad: "Hey… I noticed you've been feeling low lately. I see this is affecting you more than usual. Do you want to talk about it, or would you prefer to just sit quietly for a moment? Sometimes we don't need solutions—we just need to be heard.",
-      repeated_stress: "I've been watching your patterns, and I notice stress keeps coming back. This tells me something needs to change, even if it's small. What's one thing that's consistently causing this stress? Let's tackle it together.",
-      off_topic: "I appreciate you reaching out, but I can only help with wellness and emotional health topics. I'm specifically designed to support your mental wellbeing, help you manage stress, anxiety, and other emotions.\n\n**I can help with:**\n- Stress, anxiety, or worry management\n- Sadness or depression support\n- Coping strategies and breathing exercises\n- Motivation and confidence building\n- Sleep issues and relaxation\n- Emotional support and listening\n\nFor other topics, I'd recommend searching online or asking a general assistant.\n\nHow are you feeling emotionally today? I'm here to listen and support you. 💙",
-      default: "Thank you for sharing that with me. I want you to know that your feelings are valid, and it's brave of you to express them.\n\nHere are some things that might help:\n- **Talk it out:** Sometimes verbalizing our feelings helps us understand them better\n- **Take a break:** Step away from what's overwhelming you, even for 5 minutes\n- **Connect with someone:** Reach out to a friend, family member, or counselor\n\nWould you like me to suggest a specific wellness activity, or would you prefer to keep talking about how you're feeling?",
+      stress: "I hear you. Stress can feel heavy, and you don't have to carry it alone. Let's slow things down together:\n\n**Quick grounding:**\n1. Breathe in slowly for 4 seconds\n2. Hold for 4 seconds\n3. Breathe out for 6 seconds\n4. Repeat 3 times\n\nIf you want, you can tell me what is making you feel pressured, and I’ll help you sort through it gently.",
+      relax: "Let's make this moment softer together. Try this:\n\n**Gentle body relaxation:**\n- Notice your feet and let them relax\n- Move slowly up through your legs, stomach, shoulders, and face\n- As you exhale, imagine the tension leaving your body\n\nYou deserve a calm moment. If you want, I can stay with you and guide you through another calming step.",
+      motivation: "I’m glad you reached out. Needing support does not mean you are weak — it means you are human.\n\n**Remember:**\n- You have already survived hard days before\n- Small steps still count\n- Asking for support is a strong thing to do\n\nIf you want, tell me what feels hardest right now, and we can take it one step at a time.",
+      breathing: "Let's breathe together, slowly and kindly:\n\n**4-7-8 breathing:**\n1. Breathe in through your nose for **4 seconds**\n2. Hold for **7 seconds**\n3. Breathe out through your mouth for **8 seconds**\n4. Repeat **4 times**\n\nThis can help your body settle when anxiety or tension is high. If you'd like, I can stay with you while you do it.",
+      unclear_feelings: "That’s okay — sometimes it’s hard to name exactly what we feel. You do not need the perfect words here.\n\nTry telling me one of these:\n- what happened before you felt this way\n- where you feel it in your body\n- whether it feels like stress, sadness, fear, numbness, or confusion\n\nI can help you figure it out gently, one step at a time.",
+      repeated_sad: "I’m noticing you’ve been feeling low more than once. That matters, and I’m glad you told me. If you want, we can keep talking about what’s weighing on you, or just take a quiet moment together.",
+      repeated_stress: "It sounds like stress has been returning a lot, and that can be exhausting. I’m here with you. What feels like the biggest source of pressure right now?",
+      off_topic: "I can only help with mental health, emotional wellbeing, and psychological support. If you want, tell me how you’re feeling, what is troubling you, or what kind of support you need emotionally.\n\nI’m here to listen, gently and without judgment.",
+      default: "Thank you for telling me that. Your feelings matter, and you don't have to explain them perfectly here.\n\nIf it helps, you can share:\n- what emotion you are feeling\n- what happened before you started feeling this way\n- whether you want comfort, calming, or simple listening\n\nI’m here with you.",
     },
   },
   si: {
     initial:
-      "හායි! මම **Luma**, ඔබගේ AI wellness සහකාරයා. මම මෙතැන ඔබව ඇසීමට, සහාය ලබා දීමට, සහ ඔබට ගැලපෙන wellness උපදෙස් යෝජනා කිරීමට ඉන්නේ.\n\nඅද ඔබට කොහොමද දැනෙන්නේ? ඔබට ඕනෑම දෙයක් කියන්න පුළුවන්, නැත්නම් පහත ඉක්මන් prompts එකක් උත්සාහ කරන්න.",
-    supportLine: "Luma යනු AI සහකාරියක් වන අතර වෘත්තීය උපකාරයට වෙනුවට ආදේශකයක් නොවේ.",
+      "හායි, මම **Luma**. මම මෙතැන හිතවත් මිතුරෙකු වගේ ඔබට අහන්න, සහ ඔබගේ දැනෙන දේවල්, පීඩනය, කනස්සල්ල, දුක, සහ වෙනත් මානසික සෞඛ්‍ය ගැටලු ගැන උදව් කරන්න ඉන්නේ.\n\nඔබගේ හිතේ තියෙන දේ මට කියන්න, මම ඔබගේ චිත්තවේගීය යහපැවැත්මට පමණක් අවධානය දෙන්නම්.",
+    supportLine: "Luma චිත්තවේගීය යහපැවැත්මට සහාය දෙයි, නමුත් වෘත්තීය මානසික සෞඛ්‍ය සේවාවන්ට ආදේශකයක් නොවේ.",
     supportLink: "වෘත්තීය සහාය බලන්න",
     crisisTitle: "ඔබ තනිව නෙවෙයි.",
     crisisBody:
       "ඔබට අර්බුදයක් තිබේ නම් හෝ සියදිවි නසාගැනීමේ අදහස් තිබේ නම්, වහාම උපකාර ලබාගන්න. Sri Lanka Sumithrayo Hotline:",
     crisisLink: "සියලුම අර්බුද සහාය සම්පත් බලන්න",
     responses: {
-      stress: "ඔබට දැනෙන දේ මට ඇහෙනවා. පීඩනයක් දැනෙන්න එක සාමාන්‍යයි. විශ්වවිද්‍යාල ජීවිතය සමහර වෙලාවට අමාරු වෙන්න පුළුවන්. අපි එකට කුඩා ව්‍යායාමයක් කරමු:\n\n**ඉක්මන් Grounding ව්‍යායාමය:**\n1. තත්පර 4ක් හෙමින් ගැඹුරු හුස්මක් ඇතුළට ගන්න\n2. තත්පර 4ක් තබාගන්න\n3. තත්පර 6ක් හෙමින් හුස්ම පිට කරන්න\n4. එය වාර 3ක් නැවත කරන්න\n\nපීඩනය කියන්නේ ඔබගේ ශරීරය ඉල්ලීම් වලට ප්‍රතිචාර දක්වන ආකාරයක්. ඔබට ඒ පීඩනයට හේතුව කතා කරන්න කැමතිද? සමහරවිට ඒක නමකින් කියන්නවත් එහි බලය අඩු වෙනවා.",
-      relax: "අපි එකට නිශ්චල මොහොතක් හදාගමු. මෙන්න පේශි ලිහිල් කිරීමේ ක්‍රමයක්:\n\n**ශරීර-සම්පූර්ණ ලිහිල් කිරීම:**\n- මුලින් ඔබේ ඇඟිලි තත්පර 5ක් තද කරලා අතහරින්න\n- පසුව පන්කම්, තිඹිරි, උදරය, අත්, භාජු, උරහිස්, මුහුණ වෙත යන්න\n- එක් එක් වතාවේ තදවීම අතහරින විට එම ආතතිය දියවී යන බව දැනෙන්න\n\nඔබට මේ නිශ්චල මොහොත ලැබිය යුතුයි. ලිහිල් වීම අලසකමක් නෙවෙයි — ඒක self-care එකක්. දිගු meditation එකකට මම ඔබට මගපෙන්වන්නද?",
-      motivation: "මම ඔබව විශ්වාස කරනවා, ඔබත් එසේම කළ යුතුයි:\n\n**මතක තබාගන්න:**\n- ඔබ කලින් අභියෝග ජයගෙන තිබේ, නැවතත් ජය ගන්න පුළුවන්\n- ප්‍රගතිය හැමවිටම සෘජු නැහැ — කුඩා පියවරත් වැදගත්\n- ඔබ උදව් ඉල්ලමින් මෙතැන ඉන්නේ, ඒකම මහත් ශක්තියක්\n\n**මෙය උත්සාහ කරන්න:** මේ සතියේ ඔබ කළ දේවල් 3ක් ලියාගන්න, ඒවා කුඩා වුණත් හරි. ඔබගේ ජයග්‍රහණ සැලකිල්ලට ගැනීමෙන් උද්දීපනය වැඩි වෙනවා.\n\nඅද ඔබට ලබාගන්න කැමති කුඩා ඉලක්කය මොකක්ද? අපි එකට කරමු.",
-      breathing: "අපි හිත නිහඬ කරන හුස්ම ව්‍යායාමයක් කරමු:\n\n**4-7-8 හුස්ම ගැනීමේ ක්‍රමය:**\n1. නාසයෙන් තත්පර **4ක්** හුස්ම ඇතුළට ගන්න\n2. තත්පර **7ක්** හුස්ම තබාගන්න\n3. මුඛයෙන් තත්පර **8ක්** හුස්ම පිට කරන්න\n4. මේ චක්‍රය **4 වතාවක්** නැවත කරන්න\n\nමෙම ක්‍රමය parasympathetic nervous system එක සක්‍රිය කරනවා. ඒකෙන් ශරීරය \"fight or flight\" තත්ත්වයෙන් \"rest and digest\" තත්ත්වයට මාරු වෙන්න උදව් වෙනවා. නිදාගන්න කලින් හෝ කනස්සල්ලක් ඇති වෙලාවට විශේෂයෙන් ප්‍රයෝජනවත්.\n\nඒක කරලා පස්සේ ඔබට කොහොමද දැනුනේ?",
-      repeated_sad: "හේ… අලුතෙන්ම ඔබ ටිකක් දුකෙන් ඉන්නවා වගේ මට පෙනුණා. මෙය සාමාන්‍යයට වඩා ඔබට බලපානවා වගේ. ඒ ගැන කතා කරන්න කැමතිද, නැත්නම් මොහොතක් නිහඬව ඉන්නද? සමහර වෙලාවට විසඳුම් නෙවෙයි, අහගෙන ඉන්න කෙනෙක් පමණක් අවශ්‍ය වෙනවා.",
-      repeated_stress: "ඔබේ රටා මම නිරීක්ෂණය කරලා තියෙනවා, පීඩනය නැවත නැවත එනවා කියලා පේනවා. ඒකෙන් මට පේන්නේ කුඩා වුණත් වෙනසක් අවශ්‍යයි කියලා. නිතරම මේ පීඩනයට හේතුවන එක දෙයක් මොකක්ද? අපි එකට ඒකට මුහුණ දෙමු.",
-      off_topic: "ඔබ සම්බන්ධ වුණාට ස්තූතියි, නමුත් මට wellness සහ මානසික සෞඛ්‍ය විෂයයන්ට පමණක් උදව් කළ හැකිය. මම විශේෂයෙන්ම ඔබගේ මානසික යහපැවැත්මට සහාය වීමට, පීඩනය, කනස්සල්ල සහ වෙනත් හැඟීම් කළමනාකරණයට නිර්මාණය කර ඇතිවා.\n\n**මට උදව් කළ හැක්කේ:**\n- පීඩනය, කනස්සල්ල, හෝ කරදර කළමනාකරණය\n- දුක හෝ විෂාද සහාය\n- coping ක්‍රම සහ හුස්ම ව්‍යායාම\n- ප්‍රේරණය සහ විශ්වාසය ගොඩනැගීම\n- නින්ද ගැටලු සහ ලිහිල් වීම\n- චිත්තවේගීය සහාය සහ අහගෙන සිටීම\n\nවෙනත් විෂයයන් සඳහා, මම online සෙවීමක් කරන්න හෝ සාමාන්‍ය assistant කෙනෙකුගෙන් අහන්න කියා නිර්දේශ කරනවා.\n\nඅද ඔබට චිත්තවේගීය වශයෙන් කොහොමද දැනෙන්නේ? මම මෙතැන අහගෙන සහ සහාය දෙන්න ඉන්නවා. 💙",
-      default: "එය මට බෙදාගත්තාට ස්තූතියි. ඔබගේ හැඟීම් වලංගුයි කියලා මම ඔබට කියන්න ඕනෙ, ඒවා ප්‍රකාශ කිරීම ධෛර්යමත් දෙයක්.\n\nඋදව් විය හැකි දේවල් කිහිපයක් මෙන්න:\n- **කතා කරලා බලන්න:** සමහර වෙලාවට අපේ හැඟීම් වචනෙන් කියන එක ඒවා හොඳින් තේරුම් ගන්න උදව් වෙනවා\n- **විවේකයක් ගන්න:** ඔබව අතිශය පීඩනයට පත් කරන්නේ දේවල් වලින් මිනිත්තු 5ක් හෝ ඉවත් වෙන්න\n- **කෙනෙකු සමඟ සම්බන්ධ වෙන්න:** මිතුරෙකු, පවුලේ සාමාජිකයෙකු හෝ counselor කෙනෙකු සම්බන්ධ කරගන්න\n\nඔබට විශේෂ wellness ක්‍රියාකාරකමක් යෝජනා කරන්න මම කැමතිද, නැත්නම් ඔබ දැනෙන දේ ගැන තවදුරටත් කතා කරගෙන යන්න කැමතිද?",
+      stress: "මට ඔබ දැනෙන පීඩනය ඇහෙනවා. ඒක තනිව දරාගන්න ඕන නැහැ. අපි හෙමින් හුස්ම ගනිමු:\n\n**ඉක්මන් grounding එක:**\n1. තත්පර 4ක් හෙමින් හුස්ම ඇතුළට ගන්න\n2. තත්පර 4ක් තබාගන්න\n3. තත්පර 6ක් හෙමින් හුස්ම පිට කරන්න\n4. එය වාර 3ක් නැවත කරන්න\n\nඔබ කැමති නම්, ඔබට පීඩනය දැනෙන්නේ මොන හේතුවෙන්ද කියලා මට කියන්න. මම හෙමින් අහගෙන ඉන්නම්.",
+      relax: "අපි මේ මොහොත ටිකක් සැහැල්ලු කරමු. මෘදු ලෙස මෙය උත්සාහ කරන්න:\n\n**ශරීරය ලිහිල් කිරීම:**\n- පාවලින් පටන්ගෙන ශරීරය හරහා හෙමින් ඉහළට යන්න\n- එක් එක් හුස්ම පිට කිරීමේදී ආතතිය අතහරින්න\n- ඔබ ආරක්ෂිතයි කියලා ඔබටම මතක් කරගන්න\n\nඔබට අවශ්‍ය නම්, මම තව ටිකක් ඔබ සමඟ ඉඳගෙන මේක හෙමින් කරගෙන යන්නම්.",
+      motivation: "ඔබ මෙතැන ඇවිත් කතා කරන එකම වැදගත් දෙයක්. උදව් ඉල්ලීම දුර්වලකමක් නෙවෙයි — එය ශක්තියක්.\n\n**මතක තබාගන්න:**\n- ඔබ කලින්ද අමාරු දේවල් පහු කරලා තියෙනවා\n- කුඩා පියවරත් වැදගත්\n- සහාය ඉල්ලීම හොඳ දෙයක්\n\nඔබට කැමති නම්, දැන් ඔබට වඩාත් අමාරු දේ මට කියන්න. අපි ඒක එකට බෙදාගෙන බලමු.",
+      breathing: "අපි හෙමින් හුස්ම ගනිමු, එකට:\n\n**4-7-8 හුස්ම ගැනීම:**\n1. නාසයෙන් තත්පර **4ක්** හුස්ම ඇතුළට ගන්න\n2. තත්පර **7ක්** තබාගන්න\n3. මුඛයෙන් තත්පර **8ක්** හුස්ම පිට කරන්න\n4. එය **4 වතාවක්** නැවත කරන්න\n\nකනස්සල්ල හෝ තදවීම දැනෙද්දී මේක ශරීරය සන්සුන් කරන්න උදව් වෙනවා. ඔබ කැමති නම්, මම මේක කරන අතරතුරත් ඔබ සමඟ ඉන්නම්.",
+      unclear_feelings: "ඒක හොඳයි — සමහර වෙලාවට හරියටම මොනව දැනෙනවද කියලා කියන්න අමාරුයි. මෙතැන perfect words අවශ්‍ය නැහැ.\n\nඔබට මෙවැනි දේවල් කියන්න පුළුවන්:\n- මේ හැඟීම ආවෙ මොනකින් පස්සේද\n- ඒක ශරීරයේ කොහෙද දැනෙන්නේද\n- පීඩනය, දුක, බය, numbness, නැත්නම් confusion වගේද\n\nමම ඔබට හෙමින් ඒක තේරුම් ගන්න උදව් කරමි, එක පියවරක් ගෙන් එක පියවරක්.",
+      repeated_sad: "ඔබ නැවත නැවත දුකෙන් ඉන්නවා වගේ මට පේනවා. ඒක වැදගත්. ඔබට කැමති නම්, ඒ දේවල් ගැන තව කතා කරමු, නැත්නම් මොහොතකට නිශ්ශබ්දව ඉඳිමු.",
+      repeated_stress: "පීඩනය නැවත නැවත එනවා වගේ පේනවා, ඒක ඉතා මහන්සි කරවන දෙයක්. මම ඔබ සමඟ ඉන්නවා. දැන් වඩාත්ම තද කරන්නේ මොකක්ද?",
+      off_topic: "මට උදව් කළ හැක්කේ මානසික සෞඛ්‍යය, චිත්තවේගීය යහපැවැත්ම, සහ psychological support ගැන පමණි. ඔබට කැමති නම්, ඔබට දැනෙන්නේ කොහොමද, මොකක්ද කරදරය, හෝ මොන වගේ සහායක් අවශ්‍යද කියලා මට කියන්න.\n\nමම විනිශ්චය නැතුව අහගෙන ඉන්නම්.",
+      default: "ඔබ ඒක මා සමඟ බෙදාගත්තාට ස්තූතියි. ඔබගේ හැඟීම් වැදගත්, සහ ඒවා හරිහැටි කියන්න ඕන නැහැ කියලා මතක තබාගන්න.\n\nකැමති නම් ඔබට මෙවැනි දේවල් කියන්න පුළුවන්:\n- ඔබට දැනෙන්නේ මොන හැඟීමද\n- මේ හැඟීම ආරම්භ වුණේ කුමක් පසුද\n- ඔබට අවශ්‍ය වන්නේ සැනසීමද, සන්සුන්කමද, නැත්නම් simply අහගෙන ඉඳීමද\n\nමම මෙතැන ඉන්නවා.",
     },
   },
 } as const
@@ -87,7 +89,7 @@ function getLumaResponse(message: string, messageHistory: Message[] | undefined,
   const copy = getLumaText(language)
   const lower = message.toLowerCase().trim()
   
-  // STRICT: Only these wellness-related keywords are allowed for Luma to respond
+  // STRICT: Only mental-health and emotional wellbeing keywords are allowed for Luma to respond
   const strictWellnessKeywords = [
     // Emotions
     'stress', 'anxious', 'anxiety', 'worried', 'fear', 'afraid', 'panic',
@@ -114,7 +116,6 @@ function getLumaResponse(message: string, messageHistory: Message[] | undefined,
     'motivation', 'motivate', 'inspire', 'inspiration',
     'confidence', 'self-esteem', 'self worth',
     'relationship', 'relationships', 'social',
-    'work', 'school', 'study', 'exam', 'test', 'pressure',
     'grief', 'loss', 'pain',
     'how are you', 'how do you', 'what should', 'can you help',
     'i feel', 'i am', 'i think', 'i have', 'i want to'
@@ -149,6 +150,22 @@ function getLumaResponse(message: string, messageHistory: Message[] | undefined,
   // If repeated stress pattern detected
   if ((lower.includes("stress") || lower.includes("anxious")) && stressCount >= 2) {
     return copy.responses.repeated_stress
+  }
+
+  // When the user cannot clearly name the feeling, respond with gentle clarification
+  if (
+    lower.includes("don't know what i feel") ||
+    lower.includes("dont know what i feel") ||
+    lower.includes("can't understand what i feel") ||
+    lower.includes("cant understand what i feel") ||
+    lower.includes("not sure what i feel") ||
+    lower.includes("what am i feeling") ||
+    lower.includes("feeling confused") ||
+    lower.includes("confused about what i feel") ||
+    lower.includes("numb") ||
+    lower.includes("empty")
+  ) {
+    return copy.responses.unclear_feelings
   }
 
   // Regular keyword-based responses

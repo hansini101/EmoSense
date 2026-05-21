@@ -83,13 +83,13 @@ const externalResources = [
     name: "Sri Lanka Mental Health Foundation",
     description: "National mental health resources and support",
     phone: "1926",
-    url: "#",
+    url: "https://mhfsl.carrd.co/",
   },
   {
     name: "CCC Line (Child & Youth)",
     description: "Counseling for children and young people",
     phone: "1929",
-    url: "#",
+    url: "https://1333.lk/",
   },
   {
     name: "WHO Mental Health Resources",
@@ -98,6 +98,8 @@ const externalResources = [
     url: "https://www.who.int/health-topics/mental-health",
   },
 ]
+
+const getPhoneHref = (phone: string) => `tel:${phone.replace(/[^\d+]/g, "")}`
 
 export default function ResourcesPage() {
   const { language } = useLanguage()
@@ -153,10 +155,17 @@ export default function ResourcesPage() {
             <CardContent>
               <div className="mb-4 flex flex-col gap-2">
                 {card.details.map((detail, i) => (
-                  <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <detail.icon className="h-4 w-4 shrink-0" />
-                    <span>{detail.text}</span>
-                  </div>
+                  detail.icon === Phone ? (
+                    <a key={i} href={getPhoneHref(detail.text)} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary hover:underline">
+                      <detail.icon className="h-4 w-4 shrink-0" />
+                      <span>{detail.text}</span>
+                    </a>
+                  ) : (
+                    <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <detail.icon className="h-4 w-4 shrink-0" />
+                      <span>{detail.text}</span>
+                    </div>
+                  )
                 ))}
               </div>
               <div className="flex flex-col gap-2">
@@ -186,22 +195,36 @@ export default function ResourcesPage() {
       <h2 className="mb-4 text-xl font-semibold text-foreground">{isSinhala ? "බාහිර සම්පත්" : "External Resources"}</h2>
       <div className="grid gap-4 md:grid-cols-2">
         {externalResources.map((resource) => (
-          <Card key={resource.name}>
+          <Card
+            key={resource.name}
+            className="cursor-pointer transition-shadow hover:shadow-md"
+            role="link"
+            tabIndex={0}
+            onClick={() => window.open(resource.url, "_blank", "noopener,noreferrer")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                window.open(resource.url, "_blank", "noopener,noreferrer")
+              }
+            }}
+          >
             <CardContent className="flex items-center justify-between gap-4 p-4">
               <div>
                 <h3 className="text-sm font-semibold text-foreground">{resource.name}</h3>
                 <p className="text-xs text-muted-foreground">{resource.description}</p>
                 {resource.phone && (
-                  <a href={`tel:${resource.phone}`} className="mt-1 flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                  <a
+                    href={getPhoneHref(resource.phone)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-1 flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                  >
                     <Phone className="h-3 w-3" /> {resource.phone}
                   </a>
                 )}
               </div>
-              <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                <Button variant="ghost" size="icon">
-                  <ExternalLink className="h-4 w-4" />
-                </Button>
-              </a>
+              <Button variant="ghost" size="icon" type="button" aria-label={`Open ${resource.name}`}>
+                <ExternalLink className="h-4 w-4" />
+              </Button>
             </CardContent>
           </Card>
         ))}

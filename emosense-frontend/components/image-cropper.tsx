@@ -19,13 +19,17 @@ export function ImageCropper({ image, onCropComplete, onCancel }: ImageCropperPr
 
   const handleImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const img = e.currentTarget
-    setImgDimensions({ width: img.width, height: img.height })
-    // Set initial crop to center
+    const rect = img.getBoundingClientRect()
+    const displayedW = rect.width
+    const displayedH = rect.height
+    setImgDimensions({ width: displayedW, height: displayedH })
+    // Set initial crop to a centered square, but not larger than the image
+    const defaultSize = Math.min(200, displayedW, displayedH)
     setCrop({
-      x: (img.width - 200) / 2,
-      y: (img.height - 200) / 2,
-      width: 200,
-      height: 200,
+      x: Math.max(0, (displayedW - defaultSize) / 2),
+      y: Math.max(0, (displayedH - defaultSize) / 2),
+      width: defaultSize,
+      height: defaultSize,
     })
   }, [])
 
@@ -38,7 +42,11 @@ export function ImageCropper({ image, onCropComplete, onCancel }: ImageCropperPr
     const rect = imageRef.current.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
-    setCrop((prev) => ({ ...prev, x: Math.max(0, x - prev.width / 2), y: Math.max(0, y - prev.height / 2) }))
+    setCrop((prev) => {
+      const newX = Math.max(0, Math.min(rect.width - prev.width, x - prev.width / 2))
+      const newY = Math.max(0, Math.min(rect.height - prev.height, y - prev.height / 2))
+      return { ...prev, x: newX, y: newY }
+    })
   }
 
   const handleMouseUp = () => {
@@ -53,10 +61,23 @@ export function ImageCropper({ image, onCropComplete, onCancel }: ImageCropperPr
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    canvas.width = crop.width
-    canvas.height = crop.height
+    // Map displayed coordinates to the image's natural pixel coordinates using the element's bounding rect
+    const rect = img.getBoundingClientRect()
+    const scaleX = img.naturalWidth / rect.width
+    const scaleY = img.naturalHeight / rect.height
+    let sx = Math.max(0, Math.round(crop.x * scaleX))
+    let sy = Math.max(0, Math.round(crop.y * scaleY))
+    let sWidth = Math.max(1, Math.round(crop.width * scaleX))
+    let sHeight = Math.max(1, Math.round(crop.height * scaleY))
 
-    ctx.drawImage(img, crop.x, crop.y, crop.width, crop.height, 0, 0, crop.width, crop.height)
+    // Clamp to natural image bounds
+    if (sx + sWidth > img.naturalWidth) sWidth = img.naturalWidth - sx
+    if (sy + sHeight > img.naturalHeight) sHeight = img.naturalHeight - sy
+
+    // Export at natural-pixel size for accuracy
+    canvas.width = sWidth
+    canvas.height = sHeight
+    ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, sWidth, sHeight)
 
     const croppedImage = canvas.toDataURL('image/jpeg')
     onCropComplete(croppedImage)
@@ -64,11 +85,12 @@ export function ImageCropper({ image, onCropComplete, onCancel }: ImageCropperPr
 
   const resetCrop = useCallback(() => {
     if (imageRef.current) {
+      const defaultSize = Math.min(200, imgDimensions.width || 200, imgDimensions.height || 200)
       setCrop({
-        x: (imgDimensions.width - 200) / 2,
-        y: (imgDimensions.height - 200) / 2,
-        width: 200,
-        height: 200,
+        x: Math.max(0, ((imgDimensions.width || defaultSize) - defaultSize) / 2),
+        y: Math.max(0, ((imgDimensions.height || defaultSize) - defaultSize) / 2),
+        width: defaultSize,
+        height: defaultSize,
       })
     }
   }, [imgDimensions])
