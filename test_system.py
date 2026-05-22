@@ -191,7 +191,7 @@ def print_summary(results):
         print("   1. Ensure MongoDB is running (MONGODB_SETUP.md)")
         print("   2. Start backend: python manage.py runserver")
         print("   3. Start frontend: npm run dev")
-        print("   4. Test at: http://localhost:3002")
+        print("   4. Test at: http://localhost:3000")
     else:
         print("\n⚠️  Some checks failed. Please review above.")
 
